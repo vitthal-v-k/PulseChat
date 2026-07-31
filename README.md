@@ -51,7 +51,9 @@
 ### 🗂️ Chats & Groups
 - Create and manage **group chats**
 - Add/remove group members
-- Group admin controls
+- **Admin badge** displayed next to group admins in the members list
+- **Delete group** — permanently remove a group (group admin only)
+- Promote/demote members to/from admin role
 - One-on-one private chats automatically created on friend acceptance
 
 ### 📸 Stories / Status
