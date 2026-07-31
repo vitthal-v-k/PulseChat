@@ -37,7 +37,7 @@ public class ChatResponse {
     private Boolean isMarkedUnread;
     private Integer unreadCount;
 
-    private List<UserResponse> members;
+    private List<ChatMemberResponse> members;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

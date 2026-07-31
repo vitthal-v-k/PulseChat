@@ -12,4 +12,5 @@ export const groupApi = {
   updateGroupInfo: (groupId, formData) => api.put(`/groups/${groupId}/info`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
+  deleteGroup: (groupId) => api.delete(`/groups/${groupId}`),
 };

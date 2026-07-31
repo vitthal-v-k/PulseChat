@@ -24,6 +24,7 @@ import EmojiPicker from 'emoji-picker-react';
 import MessageBubble from './MessageBubble';
 import ConfirmModal from './ConfirmModal';
 import { useAuth } from '../context/AuthContext';
+import { groupApi } from '../api/groups';
 
 const ChatWindow = ({
   chat,
@@ -59,6 +60,31 @@ const ChatWindow = ({
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recordingTimerRef = useRef(null);
+
+  // Determine if current user is a group admin
+  const isCurrentUserAdmin = chat?.type === 'GROUP' && chat?.members?.some(
+    (m) => m.id === user?.id && m.isAdmin === true
+  );
+
+  const [showDeleteGroupConfirm, setShowDeleteGroupConfirm] = useState(false);
+  const [isDeletingGroup, setIsDeletingGroup] = useState(false);
+
+  const handleDeleteGroup = async () => {
+    if (!chat?.id) return;
+    setIsDeletingGroup(true);
+    try {
+      await groupApi.deleteGroup(chat.id);
+      setShowInfoModal(false);
+      setShowDeleteGroupConfirm(false);
+      // Reload page to refresh chat list
+      window.location.reload();
+    } catch (err) {
+      console.error('Failed to delete group:', err);
+      alert(err?.response?.data?.message || 'Failed to delete group. Are you an admin?');
+    } finally {
+      setIsDeletingGroup(false);
+    }
+  };
 
   const startVoiceRecording = async () => {
     try {
@@ -650,8 +676,8 @@ const ChatWindow = ({
                   </h4>
                   <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
                     {chat?.members?.map((m) => {
-                      const mUser = m.user || m;
-                      const isOwner = m.role === 'ADMIN' || m.role === 'OWNER';
+                      const mUser = m;
+                      const isOwner = m.isAdmin === true;
                       return (
                         <div
                           key={mUser.id}
@@ -695,6 +721,19 @@ const ChatWindow = ({
                     })}
                   </div>
                 </div>
+
+                {/* Delete Group Button — admin only */}
+                {isCurrentUserAdmin && (
+                  <div className="w-full pt-2">
+                    <button
+                      onClick={() => setShowDeleteGroupConfirm(true)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/60 transition-all font-semibold text-sm"
+                    >
+                      <FiTrash2 size={15} />
+                      Delete Group
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               /* Private Contact Info Details */
@@ -771,6 +810,18 @@ const ChatWindow = ({
           />
         </div>
       )}
+
+      {/* Delete Group Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteGroupConfirm}
+        onClose={() => setShowDeleteGroupConfirm(false)}
+        onConfirm={handleDeleteGroup}
+        title="Delete Group"
+        message={`Are you sure you want to permanently delete "${chat?.name}"? All messages and media will be lost. This cannot be undone.`}
+        confirmText={isDeletingGroup ? 'Deleting…' : 'Delete Group'}
+        loading={isDeletingGroup}
+        isDanger={true}
+      />
     </div>
   );
 };

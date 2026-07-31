@@ -1,6 +1,7 @@
 package com.vitthal.chatapp.mapper;
 
 import com.vitthal.chatapp.constants.ChatType;
+import com.vitthal.chatapp.dto.response.ChatMemberResponse;
 import com.vitthal.chatapp.dto.response.ChatResponse;
 import com.vitthal.chatapp.dto.response.UserResponse;
 import com.vitthal.chatapp.entity.Chat;
@@ -23,10 +24,18 @@ public class ChatMapper {
     public ChatResponse toResponse(Chat chat, User currentUser, ChatMember memberInfo) {
         if (chat == null) return null;
 
-        List<UserResponse> memberResponses = chat.getMembers() != null ?
+        List<ChatMemberResponse> memberResponses = chat.getMembers() != null ?
                 chat.getMembers().stream()
                         .filter(m -> m.getLeftAt() == null)
-                        .map(m -> userMapper.toResponse(m.getUser()))
+                        .map(m -> ChatMemberResponse.builder()
+                                .id(m.getUser().getId())
+                                .username(m.getUser().getUsername())
+                                .uniqueNumber(m.getUser().getUniqueNumber())
+                                .fullName(m.getUser().getFullName())
+                                .profilePicture(m.getUser().getProfilePicture())
+                                .isOnline(m.getUser().getIsOnline())
+                                .isAdmin(Boolean.TRUE.equals(m.getIsAdmin()))
+                                .build())
                         .collect(Collectors.toList()) : Collections.emptyList();
 
         UserResponse otherUser = null;
