@@ -12,7 +12,6 @@
 - [Project Structure](#-project-structure)
 - [Architecture](#-architecture)
 - [Backend Deep Dive](#-backend-deep-dive)
-- [Frontend Deep Dive](#-frontend-deep-dive)
 - [Database Schema](#-database-schema)
 - [API Endpoints](#-api-endpoints)
 - [Security](#-security)
@@ -55,7 +54,7 @@
 - Group admin controls
 - One-on-one private chats automatically created on friend acceptance
 
-### 📸 Stories / Status (WhatsApp-style)
+### 📸 Stories / Status
 - Post **text**, **image**, or **video** stories
 - Stories **auto-expire after 24 hours**
 - View who has seen your story
@@ -142,7 +141,7 @@ chatapp/
 │   │   ├── GroupController.java       # /api/groups — group management
 │   │   ├── MessageController.java     # /api/messages — send, edit, delete, react, star
 │   │   ├── NotificationController.java# /api/notifications — in-app notifications
-│   │   ├── StatusController.java      # /api/status — WhatsApp-style stories
+│   │   ├── StatusController.java      # /api/status — Stories/Status posts
 │   │   └── UserController.java        # /api/users — profile, search, settings
 │   │
 │   ├── entity/                        # JPA entities (15 tables)
@@ -265,7 +264,7 @@ chatapp/
 
 ### Entry Point
 `ChatappApplication.java` bootstraps the Spring Boot application with:
-- `@EnableAsync` — async method execution (e.g., email sending)
+- `@EnableAsync` — async method execution for non-blocking operations
 - `@EnableScheduling` — scheduled tasks (e.g., expired story cleanup)
 
 ### Security Layer
@@ -476,8 +475,8 @@ npm run build
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/vitthal/chatapp.git
-cd chatapp
+git clone https://github.com/vitthal-v-k/PulseChat.git
+cd PulseChat
 ```
 
 ### 2. Configure environment
@@ -492,7 +491,7 @@ Create `src/main/resources/application.properties` or export environment variabl
 cd frontend && npm install && npm run dev
 ```
 
-### 5. Access the app
+### 4. Access the app
 | Service | URL |
 |---|---|
 | Frontend | http://localhost:5173 |
