@@ -90,7 +90,6 @@
 | **Spring Security** | JWT-based stateless authentication |
 | **Spring Data JPA + Hibernate** | ORM & database access |
 | **Spring WebSocket (STOMP)** | Real-time messaging |
-| **Spring Mail** | Email services |
 | **MySQL 8** | Primary relational database |
 | **Cloudinary** | Cloud media storage (images, videos, files) |
 | **SpringDoc OpenAPI (Swagger)** | API documentation |
@@ -193,7 +192,7 @@ chatapp/
 │   └── constants/                     # Enums: UserRole, StatusType, StatusPrivacyType
 │
 ├── src/main/resources/
-│   └── application.properties         # DB, JWT, Cloudinary, Mail config
+│   └── application.properties         # DB, JWT, Cloudinary, CORS, logging config
 │
 └── frontend/                          # React + Vite frontend
     ├── index.html                     # HTML entry point
@@ -250,8 +249,7 @@ chatapp/
 |  +-----v-----------+  +---------------------+    |
 |  | JPA/Hibernate   |  |  External Services  |    |
 |  | Repositories    |  |  - Cloudinary       |    |
-|  +-----+-----------+  |  - Spring Mail      |    |
-|        |              +---------------------+    |
+|  +-----+-----------+  +---------------------+    |
 +--------+-----------------------------------------+
          |
 +--------v---------+
@@ -514,9 +512,6 @@ cd frontend && npm install && npm run dev
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | `your-cloud-name` |
 | `CLOUDINARY_API_KEY` | Cloudinary API key | `123456789012345` |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret | `your-api-secret` |
-| `SPRING_MAIL_HOST` | SMTP mail host | `smtp.gmail.com` |
-| `SPRING_MAIL_USERNAME` | SMTP email | `your@email.com` |
-| `SPRING_MAIL_PASSWORD` | SMTP app password | `your-app-password` |
 | `APP_CORS_ALLOWED_ORIGINS` | Allowed frontend origins | `http://localhost:5173` |
 
 ---
