@@ -22,4 +22,7 @@ public interface GroupService {
     ChatResponse demoteAdmin(User currentUser, Long groupId, Long targetUserId);
 
     ChatResponse updateGroupInfo(User currentUser, Long groupId, String name, String description, MultipartFile groupPicture);
+
+    /** Delete the entire group — only the group admin (creator) can perform this action */
+    void deleteGroup(User currentUser, Long groupId);
 }

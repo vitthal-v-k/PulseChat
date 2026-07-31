@@ -90,7 +90,7 @@ public class GroupController {
     }
 
     @PutMapping(value = "/{groupId}/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Update group name, description, or group picture")
+    @Operation(summary = "Update group name, description, or group picture (admin only)")
     public ResponseEntity<ChatResponse> updateGroupInfo(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long groupId,
@@ -99,5 +99,15 @@ public class GroupController {
             @RequestPart(value = "groupPicture", required = false) MultipartFile groupPicture) {
         User currentUser = userDetailsService.loadUserEntityByEmail(userDetails.getUsername());
         return ResponseEntity.ok(groupService.updateGroupInfo(currentUser, groupId, name, description, groupPicture));
+    }
+
+    @DeleteMapping("/{groupId}")
+    @Operation(summary = "Delete a group permanently (group admin only)")
+    public ResponseEntity<Map<String, String>> deleteGroup(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long groupId) {
+        User currentUser = userDetailsService.loadUserEntityByEmail(userDetails.getUsername());
+        groupService.deleteGroup(currentUser, groupId);
+        return ResponseEntity.ok(Map.of("message", "Group deleted successfully"));
     }
 }

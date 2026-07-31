@@ -230,4 +230,22 @@ public class GroupServiceImpl implements GroupService {
 
         return chat;
     }
+
+    @Override
+    @Transactional
+    public void deleteGroup(User currentUser, Long groupId) {
+        // Only an admin of the group can delete it
+        Chat chat = getGroupAndCheckAdmin(currentUser, groupId);
+
+        // Delete group picture from Cloudinary if exists
+        if (chat.getGroupPicturePublicId() != null) {
+            cloudinaryService.deleteFile(chat.getGroupPicturePublicId());
+        }
+
+        // Remove all members first (cascaded by JPA but explicit for clarity)
+        chatMemberRepository.deleteAll(chat.getMembers());
+
+        // Delete the group chat itself
+        chatRepository.delete(chat);
+    }
 }

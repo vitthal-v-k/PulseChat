@@ -367,9 +367,14 @@ http://localhost:8080/swagger-ui/index.html
 ### Groups — `/api/groups`
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/` | Create group chat |
-| POST | `/{id}/members` | Add member to group |
-| DELETE | `/{id}/members/{userId}` | Remove member from group |
+| POST | `/create` | Create a new group chat with optional avatar |
+| POST | `/{id}/add-members` | Add members to group (admin only) |
+| DELETE | `/{id}/remove-member/{userId}` | Remove a member from group (admin only) |
+| POST | `/{id}/leave` | Leave a group chat |
+| PUT | `/{id}/promote/{targetUserId}` | Promote a member to admin (admin only) |
+| PUT | `/{id}/demote/{targetUserId}` | Demote an admin to normal member (admin only) |
+| PUT | `/{id}/info` | Update group name, description, or picture (admin only) |
+| DELETE | `/{id}` | **Delete group permanently (admin only)** |
 
 ### Status/Stories — `/api/status`
 | Method | Endpoint | Description |
