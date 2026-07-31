@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Top-left Cyan-Blue Gradient -->
+    <linearGradient id="cyanBlueGradLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#56c2ff" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+
+    <!-- Bottom-right Magenta-Red Gradient -->
+    <linearGradient id="magentaRedGradLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e11d48" />
+      <stop offset="50%" stop-color="#be123c" />
+      <stop offset="100%" stop-color="#881337" />
+    </linearGradient>
+  </defs>
+
+  <!-- Bottom-Right Magenta/Red Bubble -->
+  <g id="bottom-bubble">
+    <path fill="url(#magentaRedGradLogo)" d="
+      M 315,175
+      C 400,175 470,235 470,315
+      C 470,395 400,455 315,455
+      C 292,455 270,450 250,441
+      C 240,452 222,468 185,480
+      C 202,457 210,440 208,427
+      C 178,399 160,359 160,315
+      C 160,235 230,175 315,175 Z
+    " />
+    <!-- 3 White dots in bottom bubble -->
+    <circle cx="235" cy="335" r="26" fill="#ffffff" />
+    <circle cx="315" cy="335" r="26" fill="#ffffff" />
+    <circle cx="395" cy="335" r="26" fill="#ffffff" />
+  </g>
+
+  <!-- Top-Left Blue Bubble with Translucent Overlap -->
+  <g id="top-bubble">
+    <path fill="url(#cyanBlueGradLogo)" fill-opacity="0.85" d="
+      M 195,35
+      C 280,35 350,95 350,175
+      C 350,255 280,315 195,315
+      C 183,315 171,313 160,310
+      C 142,323 115,342 72,350
+      C 90,327 97,305 93,291
+      C 61,263 40,222 40,175
+      C 40,95 110,35 195,35 Z
+    " />
+    <!-- 3 White dots in top bubble -->
+    <circle cx="115" cy="155" r="26" fill="#ffffff" />
+    <circle cx="195" cy="155" r="26" fill="#ffffff" />
+    <circle cx="275" cy="155" r="26" fill="#ffffff" />
+  </g>
+</svg>
