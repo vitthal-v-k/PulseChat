@@ -165,6 +165,11 @@ const Home = () => {
     setActiveTab('chats');
     setActiveChat(chat);
 
+    // Immediately clear the unread badge in the sidebar (optimistic update)
+    setChats((prev) =>
+      prev.map((c) => (Number(c.id) === Number(chat.id) ? { ...c, unreadCount: 0 } : c))
+    );
+
     messageApi
       .getChatMessages(chat.id)
       .then((res) => {
@@ -336,6 +341,31 @@ const Home = () => {
     }
   };
 
+  const handleClearChat = async (chatId) => {
+    try {
+      await chatApi.clearChatHistory(chatId);
+      if (activeChat && Number(activeChat.id) === Number(chatId)) {
+        setMessages([]);
+      }
+      loadUserChats();
+    } catch (e) {
+      console.error('Failed to clear chat:', e);
+    }
+  };
+
+  const handleDeleteChat = async (chatId) => {
+    try {
+      await chatApi.deleteChat(chatId);
+      if (activeChat && Number(activeChat.id) === Number(chatId)) {
+        setActiveChat(null);
+        setMessages([]);
+      }
+      loadUserChats();
+    } catch (e) {
+      console.error('Failed to delete chat:', e);
+    }
+  };
+
   const handleOpenStory = async (statusId, targetUserId) => {
     try {
       const [contactRes, myRes] = await Promise.all([
@@ -405,6 +435,8 @@ const Home = () => {
         onOpenNewGroup={() => setIsGroupModalOpen(true)}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        onClearChat={handleClearChat}
+        onDeleteChat={handleDeleteChat}
       />
 
       {/* Main Content Area */}
@@ -426,6 +458,8 @@ const Home = () => {
               onReactMessage={handleReactMessage}
               onOpenStory={handleOpenStory}
               onBack={() => setActiveChat(null)}
+              onClearChat={handleClearChat}
+              onDeleteChat={handleDeleteChat}
             />
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-500 dark:text-gray-400 border-b-8 border-blue-500 transition-colors">

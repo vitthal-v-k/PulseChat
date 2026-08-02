@@ -19,6 +19,7 @@ import {
   FiMapPin,
   FiLoader,
   FiTrash2,
+  FiSlash,
 } from 'react-icons/fi';
 import EmojiPicker from 'emoji-picker-react';
 import MessageBubble from './MessageBubble';
@@ -41,6 +42,8 @@ const ChatWindow = ({
   onReactMessage,
   onOpenStory,
   onBack,
+  onClearChat,
+  onDeleteChat,
 }) => {
   const { user } = useAuth();
   const [showSearch, setShowSearch] = useState(false);
@@ -68,6 +71,23 @@ const ChatWindow = ({
 
   const [showDeleteGroupConfirm, setShowDeleteGroupConfirm] = useState(false);
   const [isDeletingGroup, setIsDeletingGroup] = useState(false);
+  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showDeleteChatConfirm, setShowDeleteChatConfirm] = useState(false);
+  const [isClearingChat, setIsClearingChat] = useState(false);
+  const [isDeletingChat, setIsDeletingChat] = useState(false);
+  const headerMenuRef = useRef(null);
+
+  // Close header menu on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (headerMenuRef.current && !headerMenuRef.current.contains(e.target)) {
+        setShowHeaderMenu(false);
+      }
+    };
+    if (showHeaderMenu) document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showHeaderMenu]);
 
   const handleDeleteGroup = async () => {
     if (!chat?.id) return;
@@ -83,6 +103,28 @@ const ChatWindow = ({
       alert(err?.response?.data?.message || 'Failed to delete group. Are you an admin?');
     } finally {
       setIsDeletingGroup(false);
+    }
+  };
+
+  const handleClearChat = async () => {
+    if (!chat?.id) return;
+    setIsClearingChat(true);
+    try {
+      await onClearChat?.(chat.id);
+      setShowClearConfirm(false);
+    } finally {
+      setIsClearingChat(false);
+    }
+  };
+
+  const handleDeleteChatLocal = async () => {
+    if (!chat?.id) return;
+    setIsDeletingChat(true);
+    try {
+      await onDeleteChat?.(chat.id);
+      setShowDeleteChatConfirm(false);
+    } finally {
+      setIsDeletingChat(false);
     }
   };
 
@@ -321,6 +363,60 @@ const ChatWindow = ({
           >
             <BsSearch size={17} />
           </button>
+
+          {/* Three-dot header menu */}
+          <div className="relative" ref={headerMenuRef}>
+            <button
+              type="button"
+              onClick={() => setShowHeaderMenu((prev) => !prev)}
+              title="More options"
+              className={`p-2 rounded-full transition-colors cursor-pointer ${
+                showHeaderMenu
+                  ? 'text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-gray-700'
+                  : 'hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700/50'
+              }`}
+            >
+              <FiMoreVertical size={18} />
+            </button>
+
+            {showHeaderMenu && (
+              <div className="absolute right-0 top-10 z-50 bg-white dark:bg-[#233138] border border-gray-200 dark:border-[#374045] rounded-xl shadow-2xl overflow-hidden py-1 min-w-[190px] animate-fadeIn">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowHeaderMenu(false);
+                    setShowInfoModal(true);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                >
+                  Contact Info
+                </button>
+                <div className="border-t border-gray-100 dark:border-[#374045] my-1" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowHeaderMenu(false);
+                    setShowClearConfirm(true);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors cursor-pointer"
+                >
+                  <FiSlash size={15} />
+                  Clear Chat
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowHeaderMenu(false);
+                    setShowDeleteChatConfirm(true);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors cursor-pointer"
+                >
+                  <FiTrash2 size={15} />
+                  Delete Chat
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -820,6 +916,30 @@ const ChatWindow = ({
         message={`Are you sure you want to permanently delete "${chat?.name}"? All messages and media will be lost. This cannot be undone.`}
         confirmText={isDeletingGroup ? 'Deleting…' : 'Delete Group'}
         loading={isDeletingGroup}
+        isDanger={true}
+      />
+
+      {/* Clear Chat Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        onConfirm={handleClearChat}
+        title="Clear Chat History"
+        message={`Clear all messages in this chat for yourself? This cannot be undone.`}
+        confirmText={isClearingChat ? 'Clearing…' : 'Clear Chat'}
+        loading={isClearingChat}
+        isDanger={false}
+      />
+
+      {/* Delete Chat Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteChatConfirm}
+        onClose={() => setShowDeleteChatConfirm(false)}
+        onConfirm={handleDeleteChatLocal}
+        title="Delete Chat"
+        message={`Delete this conversation? It will be removed from your chat list. This cannot be undone.`}
+        confirmText={isDeletingChat ? 'Deleting…' : 'Delete Chat'}
+        loading={isDeletingChat}
         isDanger={true}
       />
     </div>

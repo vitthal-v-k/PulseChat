@@ -31,9 +31,21 @@
 
 ## 📸 Screenshots
 
-| Home / Chat List | Stories Viewer |
-|:---:|:---:|
-| ![PulseChat Home](docs/screenshots/home.png) | ![PulseChat Stories](docs/screenshots/stories.png) |
+### 🏠 Home — Chat List
+![PulseChat Home](docs/screenshots/home.png)
+> The main chat list view. All your conversations are listed in the left sidebar, sorted by the latest message. The right panel shows the **PulseChat for Web** landing prompt when no chat is selected. Supports dark/light mode, online presence indicators, and unread message badges.
+
+---
+
+### 👥 Contacts & Find New People
+![PulseChat Contacts](docs/screenshots/contacts.png)
+> The **Contacts & Connections** page with three tabs — *My Friends*, *Friend Requests*, and *Find New People*. Users can search contacts by their unique **7-digit User ID** or by name/username. Each result shows the user's avatar, username, and unique ID. You can instantly **Message** existing friends or send a friend request (shown as "Request Pending").
+
+---
+
+### 📖 Stories Viewer
+![PulseChat Stories](docs/screenshots/stories.png)
+> The **Status Stories** viewer overlay. Stories play full-screen with the owner's avatar and name at the top. Supports navigation between multiple stories, a **viewer count** at the bottom, mute/delete controls, and auto-advancing slides.
 
 ---
 

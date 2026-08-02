@@ -239,11 +239,7 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
                 : 'bg-black/5 dark:bg-black/30 border-teal-600 dark:border-teal-500 text-gray-800 dark:text-gray-200'
             }`}
           >
-            <div className="flex items-center justify-between text-[11px] font-bold text-teal-700 dark:text-teal-400 mb-0.5">
-              <div className="flex items-center gap-1.5">
-                <BsStars size={13} />
-                <span>Status Story</span>
-              </div>
+            <div className="flex items-center justify-end mb-0.5">
               <span className="text-[10px] text-teal-600 dark:text-teal-400 opacity-80 group-hover/story:opacity-100 font-semibold flex items-center gap-0.5">
                 View story ↗
               </span>

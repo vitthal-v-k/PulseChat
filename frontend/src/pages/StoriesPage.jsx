@@ -160,7 +160,7 @@ const StoriesPage = () => {
       }
       return acc;
     }, {})
-  );
+  ).sort((a, b) => new Date(b.latestTimestamp) - new Date(a.latestTimestamp));
 
   return (
     <div className="flex-1 h-full flex flex-col bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 p-6 overflow-y-auto transition-colors">
@@ -228,20 +228,20 @@ const StoriesPage = () => {
             No status updates from your contacts yet.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="flex flex-col divide-y divide-gray-100 dark:divide-[#222d34] bg-white dark:bg-[#111b21] border border-gray-200 dark:border-[#222d34] rounded-2xl overflow-hidden shadow-sm">
             {groupedContactStories.map((group) => (
               <div
                 key={group.user.id}
                 onClick={() => setActiveStoryGroup(group.stories)}
-                className="bg-white dark:bg-[#111b21] border border-gray-200 dark:border-[#222d34] p-4 rounded-2xl flex items-center gap-3.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1a242d] hover:border-teal-500/40 transition-all shadow-xs group"
+                className="flex items-center gap-4 px-4 py-3.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1a242d] transition-colors group"
               >
                 <StoryRing user={group.user} hasUnviewed={group.hasUnviewed} />
-                <div className="truncate">
-                  <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors truncate">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors truncate">
                     {group.user?.fullName || group.user?.username}
                   </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                    {group.stories.length} update{group.stories.length > 1 ? 's' : ''} • {new Date(group.latestTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Today at {new Date(group.latestTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>

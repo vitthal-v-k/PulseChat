@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BsChatDotsFill, BsPeopleFill, BsThreeDotsVertical, BsSun, BsMoon, BsPersonCircle, BsGearFill } from 'react-icons/bs';
 import { MdOutlineAmpStories } from 'react-icons/md';
-import { FiSearch, FiPlus } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiTrash2, FiSlash } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import StoryRing from './StoryRing';
+import ConfirmModal from './ConfirmModal';
 
 const Sidebar = ({
   activeTab,
@@ -14,10 +15,72 @@ const Sidebar = ({
   onSelectChat,
   onOpenNewGroup,
   searchTerm,
-  setSearchTerm
+  setSearchTerm,
+  onClearChat,
+  onDeleteChat,
 }) => {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState(null); // { x, y, chat }
+  const contextMenuRef = useRef(null);
+
+  // Confirm modal state
+  const [confirmState, setConfirmState] = useState({
+    isOpen: false,
+    type: null, // 'clear' | 'delete'
+    chat: null,
+    loading: false,
+  });
+
+  // Close context menu on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target)) {
+        setContextMenu(null);
+      }
+    };
+    if (contextMenu) {
+      document.addEventListener('mousedown', handleClick);
+    }
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [contextMenu]);
+
+  const handleContextMenu = useCallback((e, chat) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({ x: e.clientX, y: e.clientY, chat });
+  }, []);
+
+  const openClearConfirm = (chat) => {
+    setContextMenu(null);
+    setConfirmState({ isOpen: true, type: 'clear', chat, loading: false });
+  };
+
+  const openDeleteConfirm = (chat) => {
+    setContextMenu(null);
+    setConfirmState({ isOpen: true, type: 'delete', chat, loading: false });
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmState.chat) return;
+    setConfirmState((prev) => ({ ...prev, loading: true }));
+    try {
+      if (confirmState.type === 'clear') {
+        await onClearChat?.(confirmState.chat.id);
+      } else {
+        await onDeleteChat?.(confirmState.chat.id);
+      }
+    } finally {
+      setConfirmState({ isOpen: false, type: null, chat: null, loading: false });
+    }
+  };
+
+  const chatName = (chat) =>
+    chat?.type === 'GROUP'
+      ? chat.name
+      : chat?.otherParticipant?.fullName || chat?.otherParticipant?.username || 'User';
 
   return (
     <div className="w-full md:w-96 h-full flex flex-col bg-white dark:bg-[#111b21] border-r border-gray-200 dark:border-[#222d34] text-gray-800 dark:text-gray-200 select-none transition-colors">
@@ -164,7 +227,8 @@ const Sidebar = ({
                   e.stopPropagation();
                   if (onSelectChat) onSelectChat(chat);
                 }}
-                className={`flex items-center gap-3 p-3.5 cursor-pointer transition-all border-l-4 ${
+                onContextMenu={(e) => handleContextMenu(e, chat)}
+                className={`flex items-center gap-3 p-3.5 cursor-pointer transition-all border-l-4 group relative ${
                   isSelected
                     ? 'bg-[#e9edef] dark:bg-[#2a3942] border-teal-500 shadow-xs'
                     : 'bg-white dark:bg-[#111b21] hover:bg-[#f5f6f6] dark:hover:bg-[#202c33] border-transparent'
@@ -206,6 +270,19 @@ const Sidebar = ({
                     )}
                   </div>
                 </div>
+
+                {/* Three-dot button visible on hover */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleContextMenu(e, chat);
+                  }}
+                  className="shrink-0 p-1.5 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                  title="Chat options"
+                >
+                  <BsThreeDotsVertical size={14} />
+                </button>
               </div>
             );
           })
@@ -215,6 +292,65 @@ const Sidebar = ({
           </div>
         )}
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+          className="fixed z-[100] bg-white dark:bg-[#233138] border border-gray-200 dark:border-[#374045] rounded-xl shadow-2xl overflow-hidden py-1 min-w-[180px] animate-fadeIn"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Chat name header */}
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-[#374045]">
+            <p className="text-xs font-bold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
+              {chatName(contextMenu.chat)}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => openClearConfirm(contextMenu.chat)}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors cursor-pointer"
+          >
+            <FiSlash size={15} />
+            Clear Chat
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openDeleteConfirm(contextMenu.chat)}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors cursor-pointer"
+          >
+            <FiTrash2 size={15} />
+            Delete Chat
+          </button>
+        </div>
+      )}
+
+      {/* Clear Chat Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmState.isOpen && confirmState.type === 'clear'}
+        onClose={() => setConfirmState({ isOpen: false, type: null, chat: null, loading: false })}
+        onConfirm={handleConfirm}
+        title="Clear Chat History"
+        message={`Clear all messages in "${chatName(confirmState.chat)}" for yourself? This cannot be undone.`}
+        confirmText={confirmState.loading ? 'Clearing…' : 'Clear Chat'}
+        loading={confirmState.loading}
+        isDanger={false}
+      />
+
+      {/* Delete Chat Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmState.isOpen && confirmState.type === 'delete'}
+        onClose={() => setConfirmState({ isOpen: false, type: null, chat: null, loading: false })}
+        onConfirm={handleConfirm}
+        title="Delete Chat"
+        message={`Delete your conversation with "${chatName(confirmState.chat)}"? The chat will be removed from your list.`}
+        confirmText={confirmState.loading ? 'Deleting…' : 'Delete Chat'}
+        loading={confirmState.loading}
+        isDanger={true}
+      />
     </div>
   );
 };
