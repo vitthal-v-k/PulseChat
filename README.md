@@ -49,6 +49,12 @@
 
 ---
 
+### 📡 Status / Stories Page
+![PulseChat Stories Page](docs/screenshots/stories_page.png)
+> The **Status & Stories** hub — inspired by WhatsApp-style stories. The top card shows **My Status** with a quick tap-to-share prompt. Below it, the **Recent Updates** section lists all friends who have posted a status in the last 24 hours, showing their avatar, name, and the time of their latest update. Clicking any entry opens the full-screen **Stories Viewer** overlay. The teal gradient header and **+ Add Status** button make it easy to post a new story (text, image, or video).
+
+---
+
 ## ✨ Features
 
 ### 💬 Messaging
