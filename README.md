@@ -7,6 +7,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [Screenshots](#-screenshots)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
@@ -25,6 +26,14 @@
 ## 🌟 Overview
 
 **PulseChat** is a **full-stack, production-ready** messaging platform that delivers real-time communication between users. It supports **1-on-1 private chats**, **group conversations**, **Stories/Status posts**, media sharing via **Cloudinary**, and live online presence tracking — all secured with **JWT authentication**.
+
+---
+
+## 📸 Screenshots
+
+| Home / Chat List | Stories Viewer |
+|:---:|:---:|
+| ![PulseChat Home](docs/screenshots/home.png) | ![PulseChat Stories](docs/screenshots/stories.png) |
 
 ---
 
