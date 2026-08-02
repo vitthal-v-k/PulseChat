@@ -31,27 +31,47 @@
 
 ## 📸 Screenshots
 
-### 🏠 Home — Chat List
+<details>
+<summary>🏠 Home — Chat List</summary>
+
 ![PulseChat Home](docs/screenshots/chat_list.png)
-> The main chat list view. All your conversations are listed in the left sidebar, sorted by the latest message. The right panel shows the **PulseChat for Web** landing prompt when no chat is selected. Supports dark/light mode, online presence indicators, and unread message badges.
+
+The main chat list view. All your conversations are listed in the left sidebar, sorted by the latest message. The right panel shows the **PulseChat for Web** landing prompt when no chat is selected. Supports dark/light mode, online presence indicators, and unread message badges.
+
+</details>
 
 ---
 
-### 👥 Contacts & Find New People
+<details>
+<summary>👥 Contacts &amp; Find New People</summary>
+
 ![PulseChat Contacts](docs/screenshots/find_people.png)
-> The **Contacts & Connections** page with three tabs — *My Friends*, *Friend Requests*, and *Find New People*. Users can search contacts by their unique **7-digit User ID** or by name/username. Each result shows the user's avatar, username, and unique ID. You can instantly **Message** existing friends or send a friend request (shown as "Request Pending").
+
+The **Contacts & Connections** page with three tabs — *My Friends*, *Friend Requests*, and *Find New People*. Users can search contacts by their unique **7-digit User ID** or by name/username. Each result shows the user's avatar, username, and unique ID. You can instantly **Message** existing friends or send a friend request (shown as "Request Pending").
+
+</details>
 
 ---
 
-### 📖 Stories Viewer
+<details>
+<summary>📖 Stories Viewer</summary>
+
 ![PulseChat Stories](docs/screenshots/story_viewer.png)
-> The **Status Stories** viewer overlay. Stories play full-screen with the owner's avatar and name at the top. Supports navigation between multiple stories, a **viewer count** at the bottom, mute/delete controls, and auto-advancing slides.
+
+The **Status Stories** viewer overlay. Stories play full-screen with the owner's avatar and name at the top. Supports navigation between multiple stories, a **viewer count** at the bottom, mute/delete controls, and auto-advancing slides.
+
+</details>
 
 ---
 
-### 📡 Status / Stories Page
+<details>
+<summary>📡 Status / Stories Page</summary>
+
 ![PulseChat Stories Page](docs/screenshots/stories_page.png)
-> The **Status & Stories** hub — inspired by WhatsApp-style stories. The top card shows **My Status** with a quick tap-to-share prompt. Below it, the **Recent Updates** section lists all friends who have posted a status in the last 24 hours, showing their avatar, name, and the time of their latest update. Clicking any entry opens the full-screen **Stories Viewer** overlay. The teal gradient header and **+ Add Status** button make it easy to post a new story (text, image, or video).
+
+The **Status & Stories** hub — inspired by WhatsApp-style stories. The top card shows **My Status** with a quick tap-to-share prompt. Below it, the **Recent Updates** section lists all friends who have posted a status in the last 24 hours, showing their avatar, name, and the time of their latest update. Clicking any entry opens the full-screen **Stories Viewer** overlay. The teal gradient header and **+ Add Status** button make it easy to post a new story (text, image, or video).
+
+</details>
 
 ---
 
