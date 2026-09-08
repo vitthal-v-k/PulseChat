@@ -59,6 +59,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- PostgreSQL driver (used in production via Neon) -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 		<!-- ======================== JWT ======================== -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
