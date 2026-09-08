@@ -35,9 +35,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         String[] allowedOrigins = allowedOriginsString.split(",");
 
-        // Main WebSocket endpoint with SockJS fallback
+        // Main WebSocket endpoint with SockJS fallback (supports patterns like https://*.vercel.app)
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(allowedOrigins)
+                .setAllowedOriginPatterns(allowedOrigins)
                 .withSockJS();
     }
 }

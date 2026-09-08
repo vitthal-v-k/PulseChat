@@ -27,10 +27,11 @@ public class CorsConfig {
         // Allow credentials (cookies, Authorization headers)
         config.setAllowCredentials(true);
 
-        // Allowed origins (from application.properties)
+        // Allowed origins patterns (supports wildcards like https://*.vercel.app)
         Arrays.stream(allowedOriginsString.split(","))
               .map(String::trim)
-              .forEach(config::addAllowedOrigin);
+              .filter(s -> !s.isEmpty())
+              .forEach(config::addAllowedOriginPattern);
 
         // Allow all standard HTTP headers
         config.setAllowedHeaders(List.of(
