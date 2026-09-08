@@ -37,7 +37,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-[#0b141a] flex items-center justify-center p-4">
+    <div className="relative w-screen h-screen bg-[#0b141a] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-[#111b21] border border-[#222d34] rounded-2xl shadow-2xl p-8 text-gray-100">
         
         <div className="flex flex-col items-center mb-8">
@@ -111,6 +111,40 @@ const Login = () => {
           <Link to="/register" className="text-teal-400 font-semibold hover:underline">
             Register here
           </Link>
+        </div>
+      </div>
+
+      {/* ── Premium Creator Badge ──────────────────────────── */}
+      <div className="absolute bottom-6 left-0 right-0 flex justify-center select-none pointer-events-none">
+        <div className="creator-badge">
+          <div className="creator-badge-inner">
+            {/* Pulsing dot */}
+            <span className="relative flex h-2 w-2 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            </span>
+
+            {/* Code bracket prefix */}
+            <span className="text-purple-400 font-mono font-bold text-xs opacity-80">&lt;/&gt;</span>
+
+            <span className="text-[9px] font-semibold tracking-[0.2em] uppercase text-white/35">
+              created by
+            </span>
+
+            {/* Shimmering name */}
+            <span className="
+              text-sm font-black tracking-widest
+              bg-gradient-to-r from-teal-300 via-cyan-200 via-purple-300 to-pink-300
+              bg-[length:300%_auto] bg-clip-text text-transparent
+              animate-[shimmer_2s_linear_infinite]
+            ">
+              Vitthal
+            </span>
+
+            {/* Stars */}
+            <span className="text-pink-400 animate-pulse text-xs">✦</span>
+            <span className="text-cyan-400 animate-pulse text-xs" style={{ animationDelay: '0.5s' }}>✦</span>
+          </div>
         </div>
       </div>
     </div>

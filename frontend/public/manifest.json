@@ -1,0 +1,21 @@
+{
+  "name": "PulseChat",
+  "short_name": "PulseChat",
+  "description": "Real-time chat app — WhatsApp-style messaging for everyone",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#111b21",
+  "background_color": "#0b141a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "communication"],
+  "screenshots": []
+}

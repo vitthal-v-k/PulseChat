@@ -461,20 +461,54 @@ const ChatWindow = ({
 
       {/* Messages Scroll Thread */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2 chat-pattern">
-        {filteredMessages && filteredMessages.length > 0 ? (
-          filteredMessages.filter(Boolean).map((msg, idx) => (
-            <MessageBubble
-              key={msg?.id || idx}
-              message={msg}
-              isOwn={Boolean(user?.id && msg?.sender?.id && Number(user.id) === Number(msg.sender.id))}
-              onReply={onReplyMessage}
-              onDelete={(msgObj) => setDeleteTargetMessage(msgObj)}
-              onStar={onStarMessage}
-              onReact={onReactMessage}
-              onOpenStory={onOpenStory}
-            />
-          ))
-        ) : (
+        {filteredMessages && filteredMessages.length > 0 ? (() => {
+          // Helper: get a stable date-only string (YYYY-MM-DD) for grouping
+          const toDateKey = (dateStr) => {
+            const d = new Date(dateStr);
+            return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+          };
+          // Helper: produce a human label for the separator
+          const getDateLabel = (dateStr) => {
+            const msg = new Date(dateStr);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            const msgDay = new Date(msg.getFullYear(), msg.getMonth(), msg.getDate());
+            if (msgDay.getTime() === today.getTime()) return 'Today';
+            if (msgDay.getTime() === yesterday.getTime()) return 'Yesterday';
+            return msg.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+          };
+
+          const items = [];
+          let lastDateKey = null;
+          filteredMessages.filter(Boolean).forEach((msg, idx) => {
+            const dateKey = toDateKey(msg?.createdAt);
+            if (dateKey !== lastDateKey) {
+              lastDateKey = dateKey;
+              items.push(
+                <div key={`sep-${dateKey}`} className="flex items-center justify-center my-3">
+                  <span className="px-3 py-1 text-[11px] font-semibold text-gray-600 dark:text-gray-400 bg-white/80 dark:bg-[#182229]/80 backdrop-blur-sm rounded-full shadow-sm border border-gray-200 dark:border-[#222d34]">
+                    {getDateLabel(msg?.createdAt)}
+                  </span>
+                </div>
+              );
+            }
+            items.push(
+              <MessageBubble
+                key={msg?.id || idx}
+                message={msg}
+                isOwn={Boolean(user?.id && msg?.sender?.id && Number(user.id) === Number(msg.sender.id))}
+                onReply={onReplyMessage}
+                onDelete={(msgObj) => setDeleteTargetMessage(msgObj)}
+                onStar={onStarMessage}
+                onReact={onReactMessage}
+                onOpenStory={onOpenStory}
+              />
+            );
+          });
+          return items;
+        })() : (
           <div className="flex flex-col items-center justify-center h-full text-gray-500 text-sm">
             <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl text-center max-w-sm border border-gray-200 dark:border-[#222d34] shadow-sm">
               <p className="font-semibold mb-1 text-gray-800 dark:text-gray-300">

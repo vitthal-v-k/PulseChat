@@ -85,6 +85,12 @@
 			<version>${cloudinary.version}</version>
 		</dependency>
 
+		<!-- ======================== ACTUATOR (health check) ======================== -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- ======================== SWAGGER / OPENAPI ======================== -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -112,6 +118,18 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- ======================== WEB PUSH NOTIFICATIONS ======================== -->
+		<dependency>
+			<groupId>nl.martijndwars</groupId>
+			<artifactId>web-push</artifactId>
+			<version>5.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.78.1</version>
 		</dependency>
 
 		<!-- ======================== TEST ======================== -->

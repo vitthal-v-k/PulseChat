@@ -42,4 +42,5 @@ frontend/.env.local
 .env
 .env.local
 src/main/resources/application-local.properties
+src/main/resources/application-prod.properties
 

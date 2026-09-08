@@ -34,7 +34,12 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    /** Public endpoints that do not require authentication */
+    /**
+     * Public endpoints that do not require authentication.
+     * NOTE: Swagger endpoints are included here for local development only.
+     * In production, Swagger is fully disabled via application-prod.properties
+     * (springdoc.api-docs.enabled=false / springdoc.swagger-ui.enabled=false).
+     */
     private static final String[] PUBLIC_URLS = {
             "/api/auth/**",
             "/ws/**",

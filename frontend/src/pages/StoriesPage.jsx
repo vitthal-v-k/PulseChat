@@ -8,7 +8,7 @@ import { FiPlus, FiX, FiUploadCloud, FiType, FiImage, FiCheck, FiSend } from 're
 import { BsStars } from 'react-icons/bs';
 import { useAuth } from '../context/AuthContext';
 
-const StoriesPage = () => {
+const StoriesPage = ({ hiddenStatusUsers = [] }) => {
   const { user } = useAuth();
   const [contactStories, setContactStories] = useState([]);
   const [myStories, setMyStories] = useState([]);
@@ -160,102 +160,163 @@ const StoriesPage = () => {
       }
       return acc;
     }, {})
-  ).sort((a, b) => new Date(b.latestTimestamp) - new Date(a.latestTimestamp));
+  ).sort((a, b) => new Date(b.latestTimestamp) - new Date(a.latestTimestamp))
+    .filter((group) => !hiddenStatusUsers.includes(group.user?.id));
 
   return (
-    <div className="flex-1 h-full flex flex-col bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 p-6 overflow-y-auto transition-colors">
-      <div className="max-w-4xl mx-auto w-full">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-teal-600 dark:text-teal-400">Status Stories</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Photos & videos that disappear after 24 hours</p>
-          </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm rounded-xl flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
-          >
-            <FiPlus size={18} /> Add Story
-          </button>
+    <div className="flex-1 h-full bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 pb-24 md:pb-0 overflow-y-auto transition-colors">
+
+      {/* ── Hero Banner ─────────────────────────────────────── */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#0f766e] via-[#059669] to-[#0d9488] dark:from-[#0f3d38] dark:via-[#064e3b] dark:to-[#0f3d38] px-8 pt-10 pb-20">
+        {/* Animated mesh blobs */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-10 -right-10 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-4 left-1/3 w-32 h-32 bg-emerald-300/20 rounded-full blur-2xl" />
+          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-teal-300/10 rounded-full blur-3xl" />
+          {/* Grid lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="sg" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#sg)" />
+          </svg>
         </div>
 
-        {/* My Status Card */}
+        <div className="relative max-w-3xl mx-auto">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-emerald-200/70 text-xs font-semibold uppercase tracking-[0.2em] mb-2">PulseChat</p>
+              <h2 className="text-4xl font-black text-white tracking-tight leading-tight">Status</h2>
+              <p className="text-emerald-100/60 text-sm mt-1.5">Moments that disappear in 24 hours</p>
+            </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 bg-white text-emerald-700 font-bold text-sm px-5 py-2.5 rounded-2xl shadow-xl hover:shadow-2xl hover:bg-emerald-50 transition-all cursor-pointer hover:scale-105 active:scale-95"
+            >
+              <FiPlus size={17} strokeWidth={3} /> Add Status
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Cards float over hero ───────────────────────────── */}
+      <div className="relative max-w-3xl mx-auto w-full px-6 -mt-10 pb-12 space-y-6">
+
+        {/* My Status glass card */}
         <div
           onClick={() => {
-            if (myStories.length > 0) {
-              setActiveStoryGroup(myStories);
-            } else {
-              setShowCreateModal(true);
-            }
+            if (myStories.length > 0) setActiveStoryGroup(myStories);
+            else setShowCreateModal(true);
           }}
-          className="mb-8 bg-white dark:bg-[#111b21] p-4 rounded-2xl border border-gray-200 dark:border-[#222d34] flex items-center justify-between shadow-sm cursor-pointer hover:border-teal-500/50 transition-all group"
+          className="relative bg-white/95 dark:bg-[#111b21]/95 backdrop-blur-xl rounded-3xl border border-white/60 dark:border-white/10 shadow-2xl hover:shadow-emerald-200/40 dark:hover:shadow-emerald-900/40 transition-all cursor-pointer group overflow-hidden"
         >
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <StoryRing user={user} hasUnviewed={myStories.length > 0} />
-              {myStories.length === 0 && (
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-teal-600 border-2 border-white dark:border-[#111b21] flex items-center justify-center text-white text-xs font-extrabold shadow-sm">
-                  +
-                </div>
-              )}
+          {/* Top gradient bar */}
+          <div className="h-1 bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400" />
+          <div className="flex items-center gap-5 px-6 py-5">
+            <div className="relative shrink-0">
+              <div className="w-16 h-16 rounded-full ring-4 ring-emerald-400/40 dark:ring-emerald-500/30 ring-offset-2 ring-offset-white dark:ring-offset-[#111b21] overflow-hidden bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-black text-xl shadow-lg">
+                {user?.profilePicture
+                  ? <img src={user.profilePicture} alt="me" className="w-full h-full object-cover" />
+                  : user?.username?.charAt(0)?.toUpperCase()}
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 border-2 border-white dark:border-[#111b21] flex items-center justify-center text-white text-sm font-black shadow-md">
+                +
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-extrabold text-lg text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight">
                 My Status
               </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {myStories.length > 0 ? `${myStories.length} active story` : 'Tap to add status update'}
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
+                {myStories.length > 0
+                  ? `${myStories.length} active update${myStories.length > 1 ? 's' : ''} · Tap to view`
+                  : 'Tap to share a status update'}
               </p>
             </div>
+            <div className="shrink-0 w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
+              <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
-          {myStories.length === 0 && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowCreateModal(true);
-              }}
-              className="px-3.5 py-1.5 bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xs font-bold rounded-xl border border-teal-200 dark:border-teal-500/30 hover:bg-teal-600 hover:text-white transition-all cursor-pointer shadow-xs"
-            >
-              Add Story
-            </button>
-          )}
         </div>
 
-        {/* Recent Contact Stories */}
-        <h3 className="font-bold text-sm text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">Recent Updates</h3>
-        {groupedContactStories.length === 0 ? (
-          <div className="bg-white dark:bg-[#111b21] border border-gray-200 dark:border-[#222d34] p-8 rounded-2xl text-center text-gray-400 text-xs font-semibold">
-            No status updates from your contacts yet.
+        {/* Recent Updates */}
+        <div>
+          {/* Section label */}
+          <div className="flex items-center gap-3 mb-4 px-1">
+            <div className="flex-1 h-px bg-gradient-to-r from-gray-200 dark:from-gray-700 to-transparent" />
+            <span className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.18em] whitespace-nowrap">Recent Updates</span>
+            {groupedContactStories.length > 0 && (
+              <span className="text-[11px] font-black text-white bg-gradient-to-r from-teal-500 to-emerald-500 px-2.5 py-0.5 rounded-full shadow-sm">
+                {groupedContactStories.length}
+              </span>
+            )}
+            <div className="flex-1 h-px bg-gradient-to-l from-gray-200 dark:from-gray-700 to-transparent" />
           </div>
-        ) : (
-          <div className="flex flex-col divide-y divide-gray-100 dark:divide-[#222d34] bg-white dark:bg-[#111b21] border border-gray-200 dark:border-[#222d34] rounded-2xl overflow-hidden shadow-sm">
-            {groupedContactStories.map((group) => (
-              <div
-                key={group.user.id}
-                onClick={() => setActiveStoryGroup(group.stories)}
-                className="flex items-center gap-4 px-4 py-3.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1a242d] transition-colors group"
-              >
-                <StoryRing user={group.user} hasUnviewed={group.hasUnviewed} />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors truncate">
-                    {group.user?.fullName || group.user?.username}
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                    Today at {new Date(group.latestTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
+
+          {groupedContactStories.length === 0 ? (
+            <div className="bg-white dark:bg-[#111b21] border border-gray-200 dark:border-[#222d34] p-8 rounded-3xl text-center shadow-lg">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-teal-100 to-emerald-100 dark:from-teal-900/30 dark:to-emerald-900/30 flex items-center justify-center">
+                <BsStars size={22} className="text-teal-500" />
               </div>
-            ))}
-          </div>
-        )}
+              <p className="font-bold text-gray-600 dark:text-gray-300">Nothing here yet</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Your contacts' updates will appear here</p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {groupedContactStories.map((group) => (
+                <div
+                  key={group.user.id}
+                  onClick={() => setActiveStoryGroup(group.stories)}
+                  className="group relative bg-white dark:bg-[#111b21] rounded-2xl border border-gray-100 dark:border-[#1e2d35] shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer overflow-hidden"
+                >
+                  <div className="flex items-center gap-4 px-4 py-4">
+                    {/* Avatar */}
+                    <div className="relative shrink-0">
+                      <div className={`w-14 h-14 rounded-full overflow-hidden border-[3px] ${group.hasUnviewed ? 'border-teal-400 dark:border-teal-500 shadow-[0_0_0_3px_rgba(45,212,191,0.2)]' : 'border-gray-200 dark:border-gray-600'} bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-black text-lg`}>
+                        {group.user?.profilePicture
+                          ? <img src={group.user.profilePicture} alt={group.user.username} className="w-full h-full object-cover" />
+                          : (group.user?.fullName || group.user?.username)?.charAt(0)?.toUpperCase()}
+                      </div>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-[15px] text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors truncate">
+                        {group.user?.fullName || group.user?.username}
+                      </h4>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                          Today at {new Date(group.latestTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {group.stories.length > 1 && (
+                        <span className="text-[11px] font-black text-white bg-gradient-to-r from-teal-500 to-emerald-500 px-2.5 py-1 rounded-full shadow-sm">
+                          {group.stories.length}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+
 
       {/* Story Viewer Overlay */}
       {activeStoryGroup && (
         <StoryViewer
           stories={activeStoryGroup}
           currentUser={user}
-          onClose={() => setActiveStoryGroup(null)}
+          onClose={() => { setActiveStoryGroup(null); loadStories(); }}
           onDelete={handleDeleteStory}
           onReply={handleReplyStory}
         />

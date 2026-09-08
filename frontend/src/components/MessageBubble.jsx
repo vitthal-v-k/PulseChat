@@ -16,7 +16,7 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   const formatTime = (dateStr) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
   };
 
   const renderStatusTicks = () => {

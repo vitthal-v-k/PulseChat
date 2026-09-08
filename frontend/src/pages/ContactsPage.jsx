@@ -190,7 +190,7 @@ const ContactsPage = ({ onSelectChat }) => {
   };
 
   return (
-    <div className="flex-1 h-full flex flex-col bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 p-6 overflow-y-auto transition-colors">
+    <div className="flex-1 h-full flex flex-col bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 p-6 pb-24 md:pb-6 overflow-y-auto transition-colors">
       <div className="max-w-4xl mx-auto w-full">
         <h2 className="text-2xl font-bold mb-6 text-teal-600 dark:text-teal-400">Contacts & Connections</h2>
 

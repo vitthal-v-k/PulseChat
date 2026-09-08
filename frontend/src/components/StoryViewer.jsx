@@ -380,7 +380,7 @@ const StoryViewer = ({ stories, onClose, onDelete, onReply, currentUser }) => {
                             {name}
                           </h5>
                           <p className="text-[10px] text-gray-400">
-                            {item.viewedAt ? new Date(item.viewedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently'}
+                            {item.viewedAt ? new Date(item.viewedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : 'Recently'}
                           </p>
                         </div>
                       </div>

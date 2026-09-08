@@ -2,9 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- ── Viewport ───────────────────────────────────────────── -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- ── SEO ────────────────────────────────────────────────── -->
+    <title>PulseChat — Real-Time Messaging</title>
+    <meta name="description" content="PulseChat: a fast, secure, WhatsApp-style real-time chat app. Send messages, share media, and stay connected." />
+    <meta name="theme-color" content="#111b21" />
+
+    <!-- ── PWA Manifest ───────────────────────────────────────── -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ── Favicon ────────────────────────────────────────────── -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PulseChat</title>
+
+    <!-- ── iOS PWA (Add to Home Screen) ──────────────────────── -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PulseChat" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+
+    <!-- ── Open Graph (link previews in WhatsApp/Telegram) ───── -->
+    <meta property="og:title" content="PulseChat" />
+    <meta property="og:description" content="Real-time chat — fast, secure messaging for everyone." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo.svg" />
   </head>
   <body>
     <div id="root"></div>

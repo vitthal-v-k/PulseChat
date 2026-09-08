@@ -43,6 +43,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageMapper messageMapper;
     private final CloudinaryService cloudinaryService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final PushNotificationService pushNotificationService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -120,6 +121,15 @@ public class MessageServiceImpl implements MessageService {
         // Broadcast message over WebSocket to /topic/chat/{chatId}
         broadcastMessage(chat.getId(), savedMessage, currentUser);
 
+        // Send Web Push notification to offline recipients
+        String senderName = currentUser.getFullName() != null ? currentUser.getFullName() : currentUser.getUsername();
+        String preview = buildMessagePreview(savedMessage);
+        for (ChatMember member : members) {
+            if (!member.getUser().getId().equals(currentUser.getId())) {
+                pushNotificationService.sendToUser(member.getUser(), senderName, preview, chat.getId());
+            }
+        }
+
         return response;
     }
 
@@ -162,6 +172,15 @@ public class MessageServiceImpl implements MessageService {
 
         if (!message.getSender().getId().equals(currentUser.getId())) {
             throw new BadRequestException("You can only delete your own messages for everyone");
+        }
+
+        // 🔒 Delete attachments from Cloudinary so the URLs are truly invalidated
+        if (message.getAttachments() != null) {
+            for (Attachment attachment : message.getAttachments()) {
+                if (attachment.getPublicId() != null && !attachment.getPublicId().startsWith("local_")) {
+                    cloudinaryService.deleteFile(attachment.getPublicId());
+                }
+            }
         }
 
         message.setIsDeletedForEveryone(true);
@@ -317,5 +336,21 @@ public class MessageServiceImpl implements MessageService {
             return AttachmentType.ZIP;
         }
         return AttachmentType.FILE;
+    }
+
+    private String buildMessagePreview(Message message) {
+        String type = message.getMessageType();
+        if (type == null || "TEXT".equals(type)) {
+            String content = message.getContent();
+            if (content == null) return "Sent a message";
+            return content.length() > 80 ? content.substring(0, 80) + "…" : content;
+        }
+        return switch (type) {
+            case "IMAGE"    -> "📷 Photo";
+            case "VIDEO"    -> "🎥 Video";
+            case "AUDIO"    -> "🎙️ Voice message";
+            case "DOCUMENT" -> "📄 Document";
+            default         -> "Sent a message";
+        };
     }
 }
