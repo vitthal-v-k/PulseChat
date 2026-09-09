@@ -24,7 +24,7 @@ const Login = () => {
       navigate('/home');
     } catch (err) {
       if (err.code === 'ECONNABORTED') {
-        setError('Server is taking too long to respond. Please try again.');
+        setError('Server is waking up, please wait a moment and try again.');
       } else {
         const data = err.response?.data;
         if (data?.errors && typeof data.errors === 'object') {
