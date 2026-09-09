@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BsLockFill, BsEnvelopeFill } from 'react-icons/bs';
+import { BsLockFill, BsEnvelopeFill, BsEyeFill, BsEyeSlashFill } from 'react-icons/bs';
 import Logo from '../components/Logo';
 import { authApi } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,14 +23,18 @@ const Login = () => {
       login(res.data);
       navigate('/home');
     } catch (err) {
-      const data = err.response?.data;
-      if (data?.errors && typeof data.errors === 'object') {
-        const errorMessages = Object.entries(data.errors)
-          .map(([field, msg]) => `${field}: ${msg}`)
-          .join(' | ');
-        setError(errorMessages);
+      if (err.code === 'ECONNABORTED') {
+        setError('Server is taking too long to respond. Please try again.');
       } else {
-        setError(data?.message || 'Login failed. Please check credentials.');
+        const data = err.response?.data;
+        if (data?.errors && typeof data.errors === 'object') {
+          const errorMessages = Object.entries(data.errors)
+            .map(([field, msg]) => `${field}: ${msg}`)
+            .join(' | ');
+          setError(errorMessages);
+        } else {
+          setError(data?.message || 'Login failed. Please check credentials.');
+        }
       }
     } finally {
       setLoading(false);
@@ -73,15 +78,24 @@ const Login = () => {
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1.5">Password</label>
             <div className="relative flex items-center bg-[#202c33] border border-[#222d34] rounded-xl px-3.5 py-2.5 focus-within:border-teal-500">
-              <BsLockFill className="text-gray-500 mr-3" size={16} />
+              <BsLockFill className="text-gray-500 mr-3 flex-shrink-0" size={16} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-transparent text-sm text-white placeholder-gray-500 focus:outline-none"
+                className="w-full bg-transparent text-sm text-white placeholder-gray-500 focus:outline-none pr-8"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 text-gray-400 hover:text-teal-400 transition-colors cursor-pointer p-1"
+                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <BsEyeSlashFill size={16} /> : <BsEyeFill size={16} />}
+              </button>
             </div>
           </div>
 

@@ -4,6 +4,20 @@ import { FiTrash2, FiChevronLeft, FiChevronRight, FiEye, FiChevronUp, FiLoader, 
 import ConfirmModal from './ConfirmModal';
 import { storyApi } from '../api/stories';
 
+// Jackson LocalDateTime comes as [year,month,day,h,m,s] UTC array or ISO string without Z
+const parseLocalDateTime = (val) => {
+  if (!val) return null;
+  if (Array.isArray(val)) {
+    // array values are UTC
+    const [y, mo, d, h = 0, mi = 0, s = 0] = val;
+    return new Date(Date.UTC(y, mo - 1, d, h, mi, s));
+  }
+  const str = String(val);
+  // If no timezone marker (Z / +HH:mm / -HH:mm), backend value is UTC — force it
+  const hasZone = str.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(str);
+  return new Date(hasZone ? str : str + 'Z');
+};
+
 const StoryViewer = ({ stories, onClose, onDelete, onReply, currentUser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -194,7 +208,20 @@ const StoryViewer = ({ stories, onClose, onDelete, onReply, currentUser }) => {
                   currentStory.user?.username?.charAt(0)
                 )}
               </div>
-              <span className="font-semibold text-xs">{currentStory.user?.fullName || currentStory.user?.username}</span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-semibold text-xs">{currentStory.user?.fullName || currentStory.user?.username}</span>
+                {(() => {
+                  const dt = parseLocalDateTime(currentStory.createdAt);
+                  if (!dt || isNaN(dt.getTime())) return null;
+                  const diff = Math.floor((Date.now() - dt.getTime()) / 1000);
+                  const label =
+                    diff < 60 ? 'just now' :
+                    diff < 3600 ? `${Math.floor(diff / 60)}m ago` :
+                    diff < 86400 ? `${Math.floor(diff / 3600)}h ago` :
+                    dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                  return <span className="text-[10px] text-white/60">{label}</span>;
+                })()}
+              </div>
             </div>
 
             <div className="flex items-center gap-2">

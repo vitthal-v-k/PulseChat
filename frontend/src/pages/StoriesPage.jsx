@@ -8,6 +8,19 @@ import { FiPlus, FiX, FiUploadCloud, FiType, FiImage, FiCheck, FiSend } from 're
 import { BsStars } from 'react-icons/bs';
 import { useAuth } from '../context/AuthContext';
 
+// Jackson LocalDateTime comes as [y,m,d,h,min,s] UTC array or ISO string without Z
+const parseDT = (val) => {
+  if (!val) return new Date(0);
+  if (Array.isArray(val)) {
+    const [y, mo, d, h = 0, mi = 0, s = 0] = val;
+    return new Date(Date.UTC(y, mo - 1, d, h, mi, s)); // array is UTC!
+  }
+  const str = String(val);
+  const hasZone = str.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(str);
+  return new Date(hasZone ? str : str + 'Z'); // force UTC if no zone marker
+};
+
+
 const StoriesPage = ({ hiddenStatusUsers = [] }) => {
   const { user } = useAuth();
   const [contactStories, setContactStories] = useState([]);
@@ -155,12 +168,12 @@ const StoriesPage = ({ hiddenStatusUsers = [] }) => {
       }
       acc[userId].stories.push(story);
       if (!story.isViewed) acc[userId].hasUnviewed = true;
-      if (new Date(story.createdAt) > new Date(acc[userId].latestTimestamp)) {
+      if (parseDT(story.createdAt) > parseDT(acc[userId].latestTimestamp)) {
         acc[userId].latestTimestamp = story.createdAt;
       }
       return acc;
     }, {})
-  ).sort((a, b) => new Date(b.latestTimestamp) - new Date(a.latestTimestamp))
+  ).sort((a, b) => parseDT(b.latestTimestamp) - parseDT(a.latestTimestamp))
     .filter((group) => !hiddenStatusUsers.includes(group.user?.id));
 
   return (
@@ -289,7 +302,7 @@ const StoriesPage = ({ hiddenStatusUsers = [] }) => {
                       </h4>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <p className="text-xs text-gray-400 dark:text-gray-500">
-                          Today at {new Date(group.latestTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                          Today at {parseDT(group.latestTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                         </p>
                       </div>
                     </div>

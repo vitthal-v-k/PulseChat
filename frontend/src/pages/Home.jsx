@@ -525,7 +525,7 @@ const Home = () => {
                 onDeleteChat={handleDeleteChat}
               />
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-500 dark:text-gray-400 border-b-8 border-blue-500 transition-colors">
+              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-500 dark:text-gray-400 border-b-8 border-blue-500 transition-colors">
                 <div className="w-28 h-28 p-2 bg-white dark:bg-[#111b21] rounded-full flex items-center justify-center mb-4 shadow-md border border-gray-200 dark:border-[#222d34]">
                   <Logo className="w-full h-full" />
                 </div>
