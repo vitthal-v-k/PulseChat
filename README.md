@@ -2,10 +2,6 @@
 
 > A **production-ready**, full-stack real-time chat application built with **Spring Boot** (backend) + **React + Vite** (frontend).
 
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-thepulsechat.vercel.app-teal?style=for-the-badge)](https://thepulsechat.vercel.app/)
-[![Frontend](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge)](https://vercel.com)
-[![Backend](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge)](https://render.com)
-
 🔗 **Live App:** [https://thepulsechat.vercel.app](https://thepulsechat.vercel.app/)
 
 ---
