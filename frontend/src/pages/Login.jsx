@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsLockFill, BsEnvelopeFill, BsEyeFill, BsEyeSlashFill } from 'react-icons/bs';
 import Logo from '../components/Logo';
 import { authApi } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,9 +14,38 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Cold-start wake-up state
+  const [wakingUp, setWakingUp] = useState(false);
+  const [retryAttempt, setRetryAttempt] = useState(0);
+  const MAX_RETRIES = 3;
+  const pingDoneRef = useRef(false);
+
+  // ── Proactively wake the server when the login page loads ─────────────────
+  useEffect(() => {
+    if (pingDoneRef.current) return;
+    pingDoneRef.current = true;
+
+    // Fire a silent health-check ping; ignore errors — it's just to wake Railway
+    api.get('/health', { timeout: 65000 }).catch(() => {});
+  }, []);
+
+  // ── Listen for retry events dispatched by axios interceptor ───────────────
+  useEffect(() => {
+    const handleRetry = (e) => {
+      setWakingUp(true);
+      setRetryAttempt(e.detail.attempt);
+      setError('');
+    };
+
+    window.addEventListener('api:retrying', handleRetry);
+    return () => window.removeEventListener('api:retrying', handleRetry);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setWakingUp(false);
+    setRetryAttempt(0);
     setLoading(true);
 
     try {
@@ -23,23 +53,23 @@ const Login = () => {
       login(res.data);
       navigate('/home');
     } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        setError('Server is waking up, please wait a moment and try again.');
+      setWakingUp(false);
+      const data = err.response?.data;
+      if (data?.errors && typeof data.errors === 'object') {
+        const errorMessages = Object.entries(data.errors)
+          .map(([field, msg]) => `${field}: ${msg}`)
+          .join(' | ');
+        setError(errorMessages);
       } else {
-        const data = err.response?.data;
-        if (data?.errors && typeof data.errors === 'object') {
-          const errorMessages = Object.entries(data.errors)
-            .map(([field, msg]) => `${field}: ${msg}`)
-            .join(' | ');
-          setError(errorMessages);
-        } else {
-          setError(data?.message || 'Login failed. Please check credentials.');
-        }
+        setError(data?.message || 'Login failed. Please check credentials.');
       }
     } finally {
       setLoading(false);
     }
   };
+
+  // Progress bar percentage for cold-start retry UI
+  const retryProgress = wakingUp ? Math.round((retryAttempt / MAX_RETRIES) * 100) : 0;
 
   return (
     <div className="relative w-screen h-screen bg-[#0b141a] flex items-center justify-center p-4">
@@ -53,7 +83,38 @@ const Login = () => {
           <p className="text-xs text-gray-400 mt-1">Sign in to continue to PulseChat</p>
         </div>
 
-        {error && (
+        {/* ── Cold-start "Waking server" banner ───────────────────────────── */}
+        {wakingUp && (
+          <div className="mb-6 rounded-xl border border-teal-500/30 bg-teal-500/10 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              {/* Spinner */}
+              <svg
+                className="animate-spin h-4 w-4 text-teal-400 flex-shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+              <span className="text-xs font-semibold text-teal-300">
+                Server is waking up… ({retryAttempt}/{MAX_RETRIES})
+              </span>
+            </div>
+            <p className="text-[11px] text-teal-200/60 mb-3 leading-relaxed">
+              The server goes to sleep after inactivity. Retrying automatically — please wait a moment.
+            </p>
+            {/* Progress bar */}
+            <div className="w-full h-1.5 bg-teal-900/50 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full transition-all duration-700"
+                style={{ width: `${retryProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ── Error banner (shown only after all retries exhausted) ─────────── */}
+        {error && !wakingUp && (
           <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-xs p-3 rounded-xl mb-6 text-center leading-relaxed">
             {error}
           </div>
@@ -116,7 +177,7 @@ const Login = () => {
             disabled={loading}
             className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm transition-colors shadow-lg disabled:opacity-50 cursor-pointer"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (wakingUp ? 'Waking server…' : 'Signing in…') : 'Sign In'}
           </button>
         </form>
 
@@ -166,3 +227,5 @@ const Login = () => {
 };
 
 export default Login;
+
+
