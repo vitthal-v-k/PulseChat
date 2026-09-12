@@ -7,6 +7,7 @@ COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
 # Build
+# cache-bust: 2026-09-12
 COPY src ./src
 RUN mvn clean package -DskipTests -B
 
