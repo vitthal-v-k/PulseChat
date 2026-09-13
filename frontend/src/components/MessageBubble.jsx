@@ -286,8 +286,8 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   };
 
   return (
-    <div className={`flex w-full my-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-      <div className="relative group max-w-[75%] sm:max-w-[65%]">
+    <div className={`flex w-full max-w-full my-1 overflow-x-hidden ${isOwn ? 'justify-end' : 'justify-start'}`}>
+      <div className="relative group max-w-[78%] sm:max-w-[65%] min-w-0">
 
         {/* Message bubble container */}
         <div
