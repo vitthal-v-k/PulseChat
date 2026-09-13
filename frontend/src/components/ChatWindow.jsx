@@ -303,7 +303,7 @@ const ChatWindow = ({
     : [];
 
   return (
-    <div className="flex-1 h-[100dvh] flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors">
+    <div className="flex-1 min-h-0 flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors">
       
       {/* Top Header */}
       <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between border-b border-gray-200 dark:border-[#222d34] z-10">
@@ -461,7 +461,7 @@ const ChatWindow = ({
       )}
 
       {/* Messages Scroll Thread */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2 chat-pattern">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2 chat-pattern">
         {filteredMessages && filteredMessages.length > 0 ? (() => {
           // Helper: get a stable date-only string (YYYY-MM-DD) for grouping
           const toDateKey = (dateStr) => {
