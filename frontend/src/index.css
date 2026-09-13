@@ -51,10 +51,18 @@
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar — visible on desktop, hidden on mobile (touch scrolling) */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
+}
+
+@media (max-width: 768px) {
+  /* Hide scrollbar on mobile — touch devices swipe, no scrollbar needed */
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 }
 
 ::-webkit-scrollbar-track {
