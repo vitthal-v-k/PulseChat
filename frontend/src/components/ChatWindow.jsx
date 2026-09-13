@@ -302,7 +302,7 @@ const ChatWindow = ({
     : [];
 
   return (
-    <div className="flex-1 h-full flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors">
+    <div className="flex-1 h-[100dvh] flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors">
       
       {/* Top Header */}
       <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between border-b border-gray-200 dark:border-[#222d34] z-10">
@@ -583,7 +583,7 @@ const ChatWindow = ({
       )}
 
       {/* Input Bar */}
-      <form onSubmit={handleSend} className="h-16 px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center gap-3 border-t border-gray-200 dark:border-[#222d34]">
+      <form onSubmit={handleSend} className="shrink-0 px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center gap-3 border-t border-gray-200 dark:border-[#222d34]" style={{ paddingTop: '12px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
         <button
           type="button"
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}

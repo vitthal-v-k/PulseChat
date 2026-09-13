@@ -471,7 +471,7 @@ const Home = () => {
   const showBottomNav = !activeChat;
 
   return (
-    <div className="w-screen h-screen flex bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 overflow-hidden transition-colors">
+    <div className="w-screen h-[100dvh] flex bg-[#f0f2f5] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 overflow-hidden transition-colors">
 
       {/* ── Desktop Sidebar (always visible on md+) ───────────────── */}
       {/* ── Mobile Sidebar (only when chats tab + no active chat) ─── */}
