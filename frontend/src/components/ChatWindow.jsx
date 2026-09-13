@@ -303,7 +303,7 @@ const ChatWindow = ({
     : [];
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors">
+    <div className="flex-1 min-h-0 flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors overflow-x-hidden">
       
       {/* Top Header */}
       <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between border-b border-gray-200 dark:border-[#222d34] z-10">
