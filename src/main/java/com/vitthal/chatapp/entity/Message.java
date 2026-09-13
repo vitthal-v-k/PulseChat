@@ -15,7 +15,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "messages", indexes = {
-        @Index(name = "idx_msg_chat", columnList = "chat_id"),
+        // Composite index covers: WHERE chat_id=? AND isDeletedForEveryone=false ORDER BY created_at DESC
+        @Index(name = "idx_msg_chat_time", columnList = "chat_id, created_at DESC"),
         @Index(name = "idx_msg_sender", columnList = "sender_id"),
         @Index(name = "idx_msg_timestamp", columnList = "created_at")
 })

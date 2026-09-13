@@ -73,8 +73,9 @@ public class MessageServiceImpl implements MessageService {
 
         Message savedMessage = messageRepository.save(message);
 
-        // Upload attachments if present
+        // Upload attachments if present — build list then saveAll in one batch
         if (files != null && !files.isEmpty()) {
+            List<Attachment> attachmentList = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
                     Map upload = cloudinaryService.uploadFile(file, "attachments");
@@ -92,24 +93,28 @@ public class MessageServiceImpl implements MessageService {
                             .fileSize(file.getSize())
                             .mimeType(file.getContentType())
                             .build();
-
-                    attachmentRepository.save(attachment);
-                    savedMessage.getAttachments().add(attachment);
+                    attachmentList.add(attachment);
                 }
             }
+            // PERF: Single batch INSERT instead of N individual INSERTs
+            attachmentRepository.saveAll(attachmentList);
+            savedMessage.getAttachments().addAll(attachmentList);
         }
 
-        // Initialize status records & increment unread counts
+        // PERF: Build list of MessageStatus records then saveAll in one batch INSERT
         List<ChatMember> members = chatMemberRepository.findByChatAndLeftAtIsNull(chat);
+        List<MessageStatusEntity> statusList = new ArrayList<>();
         for (ChatMember member : members) {
             if (!member.getUser().getId().equals(currentUser.getId())) {
-                MessageStatusEntity statusEntity = MessageStatusEntity.builder()
+                statusList.add(MessageStatusEntity.builder()
                         .message(savedMessage)
                         .user(member.getUser())
                         .status(MessageStatus.SENT)
-                        .build();
-                messageStatusRepository.save(statusEntity);
+                        .build());
             }
+        }
+        if (!statusList.isEmpty()) {
+            messageStatusRepository.saveAll(statusList);
         }
 
         chatMemberRepository.incrementUnreadCount(chat, currentUser);

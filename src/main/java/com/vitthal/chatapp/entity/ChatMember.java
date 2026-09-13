@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
         uniqueConstraints = @UniqueConstraint(columnNames = {"chat_id", "user_id"}),
         indexes = {
                 @Index(name = "idx_cm_chat", columnList = "chat_id"),
-                @Index(name = "idx_cm_user", columnList = "user_id")
+                @Index(name = "idx_cm_user", columnList = "user_id"),
+                // Composite index for the hot query: WHERE user_id=? AND left_at IS NULL
+                @Index(name = "idx_cm_user_active", columnList = "user_id, left_at")
         })
 @Getter
 @Setter

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -89,12 +90,31 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional(readOnly = true)
     public List<ChatResponse> getUserChats(User currentUser) {
-        List<Chat> chats = chatRepository.findChatsForUser(currentUser);
+        // PERF: One query fetches all chats + the current user's ChatMember in one round-trip.
+        // Before: 1 (chat list) + N (per-member lookup) + N (per last-message) = 2N+1 queries.
+        // After:  3 total queries regardless of chat count.
+        List<Object[]> rows = chatRepository.findChatsWithMemberForUser(currentUser);
+        if (rows.isEmpty()) return List.of();
 
-        return chats.stream().map(chat -> {
-            ChatMember memberInfo = chatMemberRepository.findByChatAndUser(chat, currentUser).orElse(null);
-            ChatResponse response = chatMapper.toResponse(chat, currentUser, memberInfo);
-            attachLastMessage(response, chat, currentUser);
+        // Collect chat IDs so we can bulk-load last messages in a single IN query
+        List<Long> chatIds = rows.stream()
+                .map(row -> ((Chat) row[0]).getId())
+                .collect(Collectors.toList());
+
+        // One query to get the latest message for every chat
+        Map<Long, Message> latestMsgByChatId = chatRepository.findLatestMessagesForChats(chatIds)
+                .stream()
+                .collect(Collectors.toMap(m -> m.getChat().getId(), m -> m, (a, b) -> a));
+
+        // Map everything to DTOs using pre-loaded data — zero additional DB calls
+        return rows.stream().map(row -> {
+            Chat chat       = (Chat)       row[0];
+            ChatMember mem  = (ChatMember) row[1];
+            ChatResponse response = chatMapper.toResponse(chat, currentUser, mem);
+            Message lastMsg = latestMsgByChatId.get(chat.getId());
+            if (lastMsg != null) {
+                response.setLastMessage(messageMapper.toResponse(lastMsg, currentUser));
+            }
             return response;
         }).collect(Collectors.toList());
     }

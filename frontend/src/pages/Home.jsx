@@ -25,6 +25,9 @@ const Home = () => {
   const { user } = useAuth();
   const { connected, subscribe, publish } = useSocket();
 
+  // Debounce timer for chat list refresh — prevents N API calls during message bursts
+  const chatRefreshTimerRef = useRef(null);
+
   const [activeTab, setActiveTab] = useState('chats'); // 'chats', 'contacts', 'stories', 'settings', 'profile'
   const [chats, setChats] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
@@ -157,7 +160,7 @@ const Home = () => {
 
     const msgSub = subscribe(`/topic/chat/${activeChat.id}`, (incomingMsg) => {
       setMessages((prev) => mergeOrAppendMessage(prev, incomingMsg));
-      loadUserChats(); // Refresh chat preview order
+      debouncedLoadChats(); // Debounced: won't fire more than once per 1.5s
     });
 
     // Typing Stream
@@ -180,6 +183,13 @@ const Home = () => {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  // Debounced version — waits 1.5s after the last call before actually fetching.
+  // Prevents hammering the API when messages arrive rapidly.
+  const debouncedLoadChats = () => {
+    if (chatRefreshTimerRef.current) clearTimeout(chatRefreshTimerRef.current);
+    chatRefreshTimerRef.current = setTimeout(() => loadUserChats(), 1500);
   };
 
   const loadFriends = async () => {
@@ -285,7 +295,15 @@ const Home = () => {
       const res = await messageApi.sendMessage(formData);
       if (res && res.data) {
         setMessages((prev) => mergeOrAppendMessage(prev, res.data, tempId));
-        loadUserChats();
+        // Optimistic sidebar update: update preview locally, then debounce a real refresh
+        setChats((prev) =>
+          prev.map((c) =>
+            Number(c.id) === Number(activeChat.id)
+              ? { ...c, lastMessage: res.data, updatedAt: res.data.createdAt }
+              : c
+          )
+        );
+        debouncedLoadChats();
       }
     } catch (err) {
       console.error('Send message failed:', err);
