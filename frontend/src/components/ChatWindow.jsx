@@ -590,7 +590,7 @@ const ChatWindow = ({
       ═══════════════════════════════════════════════════════════════ */}
       <form onSubmit={handleSend}
         className="shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34]"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)', overflowX: 'hidden', width: '100%' }}>
 
         {/* Attachment popup — slides above bar when '+' is tapped. Universal (any screen size). */}
         {showAttachMenu && (
