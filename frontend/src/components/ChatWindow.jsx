@@ -583,108 +583,163 @@ const ChatWindow = ({
         </div>
       )}
 
-      {/* Input Bar — mobile: collapses icons into a '+' popup so all buttons fit */}
-      <form onSubmit={handleSend} className="shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      {/* ═══════════════════════════════════════════════════════════════
+           INPUT BAR — universal layout, works on ANY screen width.
+           Main row: [+ 34px] [input flex-1] [mic|send 34px]
+           Fixed overhead ≈ 96px → 138px left for text even at 234px wide.
+      ═══════════════════════════════════════════════════════════════ */}
+      <form onSubmit={handleSend}
+        className="shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34]"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
 
-        {/* Mobile attachment popup panel */}
+        {/* Attachment popup — slides above bar when '+' is tapped. Universal (any screen size). */}
         {showAttachMenu && (
-          <div className="md:hidden flex items-center justify-around px-6 py-3 border-b border-gray-200 dark:border-[#2a3942] animate-fadeIn">
+          <div className="flex items-center justify-around px-4 py-3 border-b border-gray-200 dark:border-[#2a3942] animate-fadeIn bg-[#f0f2f5] dark:bg-[#202c33]">
             <button type="button" onClick={() => { setShowEmojiPicker((p) => !p); setShowAttachMenu(false); }}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500">
-              <span className="w-12 h-12 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsEmojiSmile size={21} />
+              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors">
+              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                <BsEmojiSmile size={19} />
               </span>
-              <span className="text-[10px] font-medium">Emoji</span>
+              <span className="text-[9px] font-medium tracking-wide">Emoji</span>
             </button>
             <button type="button" onClick={() => { fileInputRef.current?.click(); setShowAttachMenu(false); }}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500">
-              <span className="w-12 h-12 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsPaperclip size={21} />
+              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors">
+              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                <BsPaperclip size={19} />
               </span>
-              <span className="text-[10px] font-medium">Attach</span>
+              <span className="text-[9px] font-medium tracking-wide">Attach</span>
             </button>
             <button type="button" onClick={() => { handleSendLocation(); setShowAttachMenu(false); }} disabled={isGettingLocation}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 disabled:opacity-50">
-              <span className="w-12 h-12 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                {isGettingLocation ? <FiLoader size={21} className="animate-spin" /> : <FiMapPin size={21} />}
+              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 disabled:opacity-40 transition-colors">
+              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                {isGettingLocation ? <FiLoader size={19} className="animate-spin" /> : <FiMapPin size={19} />}
               </span>
-              <span className="text-[10px] font-medium">Location</span>
+              <span className="text-[9px] font-medium tracking-wide">Location</span>
+            </button>
+            <button type="button" onClick={() => { startVoiceRecording(); setShowAttachMenu(false); }}
+              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors">
+              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                <BsMicFill size={19} />
+              </span>
+              <span className="text-[9px] font-medium tracking-wide">Voice</span>
             </button>
           </div>
         )}
 
-        {/* Main input row */}
-        <div className="flex items-center gap-2 px-2 md:px-4 md:gap-3" style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+        {/* ── Main input row: 3 elements only → fits ANY screen width ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 8px', paddingBottom: '8px' }}>
 
-          {/* Mobile: '+' toggle */}
-          <button type="button" onClick={() => setShowAttachMenu((p) => !p)}
-            className={`md:hidden shrink-0 w-9 h-9 flex items-center justify-center rounded-full border transition-all duration-200 ${
-              showAttachMenu
-                ? 'bg-teal-500 border-teal-500 text-white'
-                : 'bg-white dark:bg-[#2a3942] border-gray-200 dark:border-[#374045] text-gray-500 dark:text-gray-400'
-            }`}>
-            <BsPaperclip size={17} className={showAttachMenu ? 'rotate-45 transition-transform' : 'transition-transform'} />
-          </button>
-
-          {/* Desktop: all 3 icons inline */}
-          <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="hidden md:inline-flex text-gray-500 dark:text-gray-400 hover:text-teal-600 p-2 shrink-0">
-            <BsEmojiSmile size={20} />
-          </button>
-          <button type="button" onClick={() => fileInputRef.current?.click()}
-            className="hidden md:inline-flex text-gray-500 dark:text-gray-400 hover:text-teal-600 p-2 shrink-0 cursor-pointer">
-            <BsPaperclip size={20} />
-          </button>
-          <button type="button" onClick={handleSendLocation} disabled={isGettingLocation}
-            className={`hidden md:inline-flex p-2 shrink-0 transition-colors cursor-pointer ${
-              isGettingLocation ? 'text-teal-500' : 'text-gray-500 dark:text-gray-400 hover:text-teal-600'
-            }`}>
-            {isGettingLocation ? <FiLoader size={20} className="animate-spin" /> : <FiMapPin size={20} />}
+          {/* '+' toggle — fixed 34px */}
+          <button
+            type="button"
+            onClick={() => setShowAttachMenu((p) => !p)}
+            style={{
+              flexShrink: 0,
+              width: 34, height: 34,
+              borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: showAttachMenu ? 'none' : '1.5px solid',
+              background: showAttachMenu ? '#0d9488' : 'transparent',
+              color: showAttachMenu ? '#fff' : '#6b7280',
+              transition: 'all 0.2s',
+            }}
+          >
+            {showAttachMenu
+              ? <BsSendFill size={14} style={{ transform: 'rotate(45deg)' }} />
+              : <BsPaperclip size={16} />}
           </button>
 
           <input ref={fileInputRef} type="file" multiple onChange={handleFileSelect} className="hidden" />
 
-          {/* Recording state */}
+          {/* Recording UI fills the flex-1 slot */}
           {isRecording ? (
-            <div className="flex-1 flex items-center justify-between bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl px-3 py-2 animate-fadeIn">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping shrink-0" />
-                <span className="text-xs font-mono font-bold text-red-600 dark:text-red-400">{formatRecordingTime(recordingTime)}</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">Recording...</span>
+            <div style={{
+              flex: 1, minWidth: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: 'rgba(220,38,38,0.08)',
+              border: '1px solid rgba(220,38,38,0.3)',
+              borderRadius: 12, padding: '6px 10px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                <span className="text-xs font-mono font-bold text-red-500">{formatRecordingTime(recordingTime)}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', gap: 4 }}>
                 <button type="button" onClick={cancelVoiceRecording}
-                  className="p-1.5 text-gray-500 hover:text-red-600 rounded-full transition-colors cursor-pointer">
-                  <FiTrash2 size={17} />
+                  className="p-1.5 text-gray-500 hover:text-red-600 rounded-full cursor-pointer">
+                  <FiTrash2 size={16} />
                 </button>
                 <button type="button" onClick={finishAndSendVoiceRecording}
-                  className="bg-teal-600 hover:bg-teal-500 text-white p-2 rounded-xl shadow-md flex items-center justify-center cursor-pointer">
-                  <BsSendFill size={15} />
+                  style={{ background: '#0d9488', color: '#fff', border: 'none', borderRadius: 10, padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                  <BsSendFill size={14} />
                 </button>
               </div>
             </div>
           ) : (
-            <>
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={inputText}
-                onChange={handleInputChange}
-                className="flex-1 min-w-0 bg-white dark:bg-[#2a3942] text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-xl px-3 py-2.5 focus:outline-none border border-gray-200 dark:border-transparent"
-              />
-              <button type="button" onClick={startVoiceRecording} title="Record Voice Note"
-                className="bg-amber-600 hover:bg-amber-500 text-white p-2.5 rounded-xl shadow-md flex items-center justify-center cursor-pointer active:scale-95 shrink-0">
-                <BsMicFill size={15} />
-              </button>
-              <button type="submit" disabled={!inputText.trim() && selectedFiles.length === 0} title="Send Message"
-                className={`p-2.5 rounded-xl shadow-md flex items-center justify-center shrink-0 transition-all ${
-                  inputText.trim() || selectedFiles.length > 0
-                    ? 'bg-teal-600 hover:bg-teal-500 text-white cursor-pointer'
-                    : 'bg-gray-300 dark:bg-[#2a3942] text-gray-400 cursor-not-allowed opacity-60'
-                }`}>
+            /* Text input — flex-1 min-w-0 stretches to fill ALL remaining space */
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={inputText}
+              onChange={handleInputChange}
+              style={{
+                flex: 1,
+                minWidth: 0,
+                background: 'var(--input-bg, #fff)',
+                fontSize: 14,
+                borderRadius: 20,
+                padding: '9px 14px',
+                border: '1px solid rgba(0,0,0,0.1)',
+                outline: 'none',
+                color: 'inherit',
+              }}
+              className="dark:bg-[#2a3942] dark:border-transparent dark:text-gray-100 dark:placeholder-gray-400"
+            />
+          )}
+
+          {/* Mic / Send toggle — fixed 34px, switches based on content (WhatsApp pattern) */}
+          {isRecording ? null : (
+            inputText.trim() || selectedFiles.length > 0 ? (
+              <button
+                type="submit"
+                title="Send Message"
+                style={{
+                  flexShrink: 0,
+                  width: 36, height: 36,
+                  borderRadius: '50%',
+                  background: '#0d9488',
+                  color: '#fff',
+                  border: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                  transition: 'background 0.15s, transform 0.1s',
+                }}
+                onMouseDown={e => e.currentTarget.style.transform = 'scale(0.92)'}
+                onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+              >
                 <BsSendFill size={15} />
               </button>
-            </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { setShowAttachMenu(false); startVoiceRecording(); }}
+                title="Record Voice Note"
+                style={{
+                  flexShrink: 0,
+                  width: 36, height: 36,
+                  borderRadius: '50%',
+                  background: '#d97706',
+                  color: '#fff',
+                  border: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                }}
+              >
+                <BsMicFill size={15} />
+              </button>
+            )
           )}
         </div>
       </form>
