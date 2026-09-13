@@ -81,19 +81,49 @@
   background: rgba(134, 150, 160, 0.5);
 }
 
-/* ── Mobile input bar safety net ────────────────────────────────────
-   Prevent any form (input bar) from ever overflowing the viewport.
-   Works even with old cached JS builds. */
+/* ── Mobile input bar: force compact size on all versions ─────────────
+   Uses !important to override both Tailwind classes and inline styles.
+   Works even if old cached JS renders 5+ buttons in one row. */
 form {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
-/* Force all flex children in forms to shrink and never overflow */
-form > * {
-  min-width: 0;
-  flex-shrink: 1;
+@media (max-width: 767px) {
+  /* Shrink all icon buttons so they fit any screen */
+  form button {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    padding: 5px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Shrink icons inside buttons */
+  form button svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  /* Input fills all remaining space */
+  form input[type="text"] {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+  }
+
+  /* Compact row gaps and padding */
+  form > div {
+    padding: 6px !important;
+    gap: 4px !important;
+  }
 }
 
 /* Telegram / WhatsApp Chat Pattern Overlay */
