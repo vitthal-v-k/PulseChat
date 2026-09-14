@@ -286,8 +286,8 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   };
 
   return (
-    <div className={`flex w-full max-w-full my-1 overflow-x-hidden ${isOwn ? 'justify-end' : 'justify-start'}`}>
-      <div className="relative group max-w-[78%] sm:max-w-[65%] min-w-0">
+    <div className={`flex w-full max-w-full my-1 ${isOwn ? 'justify-end pr-1' : 'justify-start pl-1'}`}>
+      <div className="relative group max-w-[85%] sm:max-w-[70%] min-w-0">
 
         {/* Message bubble container */}
         <div
@@ -403,9 +403,9 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
           {renderMessageBody()}
 
           {/* Footer timestamp & status ticks */}
-          <div className="flex items-center justify-end gap-1.5 mt-1 opacity-70 text-[11px] float-right ml-4">
-            {message.isEdited && <span>(edited)</span>}
-            <span>{formatTime(message.createdAt)}</span>
+          <div className="flex items-center justify-end gap-1 mt-1 opacity-70 text-[11px] float-right ml-3 shrink-0">
+            {message.isEdited && <span className="text-[10px]">(edited)</span>}
+            <span className="whitespace-nowrap">{formatTime(message.createdAt)}</span>
             {renderStatusTicks()}
           </div>
 

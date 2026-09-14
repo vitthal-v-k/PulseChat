@@ -6,10 +6,10 @@
  *  3. Notification click navigation
  */
 
-const CACHE_NAME = 'pulsechat-v1';
-const SHELL_ASSETS = ['/', '/index.html', '/logo.svg', '/favicon.svg'];
+const CACHE_NAME = 'pulsechat-v2';
+const SHELL_ASSETS = ['/logo.svg', '/favicon.svg'];
 
-// ─── Install: cache app shell ───────────────────────────────────────────────
+// ─── Install: cache app assets ──────────────────────────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_ASSETS))
@@ -27,18 +27,26 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// ─── Fetch: network-first for API, cache-first for shell ─────────────────────
+// ─── Fetch: network-first for all requests, fallback to cache ────────────────
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   // Never intercept API or WebSocket requests
   if (url.pathname.startsWith('/api') || url.pathname.startsWith('/ws')) return;
 
+  // For HTML page navigation, ALWAYS go to network first so users get latest code
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Update cache with fresh response for GET requests
-        if (event.request.method === 'GET' && response.ok) {
+        // Cache hashed assets only
+        if (event.request.method === 'GET' && response.ok && url.pathname.startsWith('/assets/')) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }

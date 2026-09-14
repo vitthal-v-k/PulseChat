@@ -82,8 +82,7 @@
 }
 
 /* ── Mobile input bar: force compact size on all versions ─────────────
-   Uses !important to override both Tailwind classes and inline styles.
-   Works even if old cached JS renders 5+ buttons in one row. */
+   Ensures the input row never overflows even on screens as narrow as 280px. */
 form {
   max-width: 100%;
   overflow-x: hidden;
@@ -91,13 +90,14 @@ form {
 }
 
 @media (max-width: 767px) {
-  /* Shrink all icon buttons so they fit any screen */
-  form button {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    max-width: 30px !important;
-    padding: 5px !important;
+  /* Shrink icon buttons in the input row */
+  .chat-input-row button,
+  form button:not(.attach-menu-item) {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    padding: 0 !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
@@ -106,23 +106,24 @@ form {
   }
 
   /* Shrink icons inside buttons */
-  form button svg {
-    width: 15px !important;
-    height: 15px !important;
+  .chat-input-row button svg,
+  form button:not(.attach-menu-item) svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   /* Input fills all remaining space */
   form input[type="text"] {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    padding: 8px 10px !important;
+    padding: 7px 12px !important;
     font-size: 13px !important;
   }
 
   /* Compact row gaps and padding */
-  form > div {
-    padding: 6px !important;
-    gap: 4px !important;
+  .chat-input-row {
+    padding: 6px 8px !important;
+    gap: 6px !important;
   }
 }
 

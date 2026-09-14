@@ -303,16 +303,16 @@ const ChatWindow = ({
     : [];
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors">
+    <div className="flex-1 min-h-0 min-w-0 w-full max-w-full flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors overflow-hidden">
       
       {/* Top Header */}
-      <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between border-b border-gray-200 dark:border-[#222d34] z-10">
-        <div className="flex items-center gap-3">
+      <div className="h-16 px-3 sm:px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between border-b border-gray-200 dark:border-[#222d34] z-10 w-full min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
           {onBack && (
             <button
               onClick={onBack}
               title="Back to chat list"
-              className="p-2 -ml-1 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-full hover:bg-gray-200 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
+              className="p-2 -ml-1 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-full hover:bg-gray-200 dark:hover:bg-gray-700/50 cursor-pointer transition-colors shrink-0"
             >
               <FiArrowLeft size={20} />
             </button>
@@ -320,7 +320,7 @@ const ChatWindow = ({
           <div
             onClick={() => setShowInfoModal(true)}
             title="Click to view info"
-            className="flex items-center gap-3 cursor-pointer hover:opacity-85 transition-opacity"
+            className="flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:opacity-85 transition-opacity min-w-0 flex-1"
           >
             <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-teal-500 to-emerald-600 flex items-center justify-center font-bold text-white uppercase shadow-xs shrink-0">
               {displayAvatar ? (
@@ -329,9 +329,9 @@ const ChatWindow = ({
                 <span>{displayName?.charAt(0) || 'C'}</span>
               )}
             </div>
-            <div>
-              <h3 className="font-bold text-sm leading-tight text-gray-900 dark:text-gray-100">{displayName}</h3>
-              <p className="text-xs">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-sm leading-tight text-gray-900 dark:text-gray-100 truncate">{displayName}</h3>
+              <p className="text-xs truncate">
                 {typingUser ? (
                   <span className="text-teal-600 dark:text-teal-400 font-semibold animate-pulse">{typingUser} is typing...</span>
                 ) : chat?.type === 'PRIVATE' ? (
@@ -349,7 +349,7 @@ const ChatWindow = ({
         </div>
 
         {/* Action icons */}
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+        <div className="flex items-center gap-1 sm:gap-2 text-gray-600 dark:text-gray-300 shrink-0">
           <button
             onClick={() => {
               setShowSearch(!showSearch);
@@ -461,7 +461,7 @@ const ChatWindow = ({
       )}
 
       {/* Messages Scroll Thread */}
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 space-y-2 chat-pattern">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2 sm:px-4 py-2 sm:py-3 space-y-2 chat-pattern w-full min-w-0">
         {filteredMessages && filteredMessages.length > 0 ? (() => {
           // Helper: get a stable date-only string (YYYY-MM-DD) for grouping
           const toDateKey = (dateStr) => {
@@ -589,63 +589,59 @@ const ChatWindow = ({
            Fixed overhead ≈ 96px → 138px left for text even at 234px wide.
       ═══════════════════════════════════════════════════════════════ */}
       <form onSubmit={handleSend}
-        className="shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34]"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)', overflowX: 'hidden', width: '100%' }}>
+        className="shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34] w-full max-w-full overflow-hidden"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
 
-        {/* Attachment popup — slides above bar when '+' is tapped. Universal (any screen size). */}
+        {/* Attachment popup — slides above bar when '+' is tapped */}
         {showAttachMenu && (
-          <div className="flex items-center justify-around px-4 py-3 border-b border-gray-200 dark:border-[#2a3942] animate-fadeIn bg-[#f0f2f5] dark:bg-[#202c33]">
+          <div className="flex items-center justify-around px-3 py-2.5 sm:px-4 sm:py-3 border-b border-gray-200 dark:border-[#2a3942] animate-fadeIn bg-[#f0f2f5] dark:bg-[#202c33] w-full">
             <button type="button" onClick={() => { setShowEmojiPicker((p) => !p); setShowAttachMenu(false); }}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors">
-              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsEmojiSmile size={19} />
+              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors cursor-pointer">
+              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                <BsEmojiSmile size={18} />
               </span>
-              <span className="text-[9px] font-medium tracking-wide">Emoji</span>
+              <span className="text-[10px] font-medium tracking-wide">Emoji</span>
             </button>
             <button type="button" onClick={() => { fileInputRef.current?.click(); setShowAttachMenu(false); }}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors">
-              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsPaperclip size={19} />
+              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors cursor-pointer">
+              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                <BsPaperclip size={18} />
               </span>
-              <span className="text-[9px] font-medium tracking-wide">Attach</span>
+              <span className="text-[10px] font-medium tracking-wide">Attach</span>
             </button>
             <button type="button" onClick={() => { handleSendLocation(); setShowAttachMenu(false); }} disabled={isGettingLocation}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 disabled:opacity-40 transition-colors">
-              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                {isGettingLocation ? <FiLoader size={19} className="animate-spin" /> : <FiMapPin size={19} />}
+              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 disabled:opacity-40 transition-colors cursor-pointer">
+              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                {isGettingLocation ? <FiLoader size={18} className="animate-spin" /> : <FiMapPin size={18} />}
               </span>
-              <span className="text-[9px] font-medium tracking-wide">Location</span>
+              <span className="text-[10px] font-medium tracking-wide">Location</span>
             </button>
             <button type="button" onClick={() => { startVoiceRecording(); setShowAttachMenu(false); }}
-              className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors">
-              <span className="w-11 h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsMicFill size={19} />
+              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors cursor-pointer">
+              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
+                <BsMicFill size={18} />
               </span>
-              <span className="text-[9px] font-medium tracking-wide">Voice</span>
+              <span className="text-[10px] font-medium tracking-wide">Voice</span>
             </button>
           </div>
         )}
 
         {/* ── Main input row: 3 elements only → fits ANY screen width ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 8px', paddingBottom: '8px' }}>
+        <div className="chat-input-row flex items-center gap-1.5 sm:gap-2 p-2 w-full min-w-0 box-border">
 
-          {/* '+' toggle — fixed 34px */}
+          {/* '+' toggle */}
           <button
             type="button"
             onClick={() => setShowAttachMenu((p) => !p)}
+            className="input-circle-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center cursor-pointer transition-all border"
             style={{
-              flexShrink: 0,
-              width: 34, height: 34,
-              borderRadius: '50%',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: showAttachMenu ? 'none' : '1.5px solid',
+              borderColor: showAttachMenu ? 'transparent' : 'rgba(156, 163, 175, 0.4)',
               background: showAttachMenu ? '#0d9488' : 'transparent',
               color: showAttachMenu ? '#fff' : '#6b7280',
-              transition: 'all 0.2s',
             }}
           >
             {showAttachMenu
-              ? <BsSendFill size={14} style={{ transform: 'rotate(45deg)' }} />
+              ? <BsSendFill size={13} style={{ transform: 'rotate(45deg)' }} />
               : <BsPaperclip size={16} />}
           </button>
 
@@ -653,25 +649,19 @@ const ChatWindow = ({
 
           {/* Recording UI fills the flex-1 slot */}
           {isRecording ? (
-            <div style={{
-              flex: 1, minWidth: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              background: 'rgba(220,38,38,0.08)',
-              border: '1px solid rgba(220,38,38,0.3)',
-              borderRadius: 12, padding: '6px 10px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div className="flex-1 min-w-0 flex items-center justify-between rounded-xl px-2.5 py-1.5 bg-red-500/10 border border-red-500/30">
+              <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
                 <span className="text-xs font-mono font-bold text-red-500">{formatRecordingTime(recordingTime)}</span>
               </div>
-              <div style={{ display: 'flex', gap: 4 }}>
+              <div className="flex items-center gap-1">
                 <button type="button" onClick={cancelVoiceRecording}
                   className="p-1.5 text-gray-500 hover:text-red-600 rounded-full cursor-pointer">
-                  <FiTrash2 size={16} />
+                  <FiTrash2 size={15} />
                 </button>
                 <button type="button" onClick={finishAndSendVoiceRecording}
-                  style={{ background: '#0d9488', color: '#fff', border: 'none', borderRadius: 10, padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                  <BsSendFill size={14} />
+                  className="bg-teal-600 hover:bg-teal-500 text-white rounded-lg px-2.5 py-1 cursor-pointer flex items-center">
+                  <BsSendFill size={13} />
                 </button>
               </div>
             </div>
@@ -682,60 +672,26 @@ const ChatWindow = ({
               placeholder="Type a message..."
               value={inputText}
               onChange={handleInputChange}
-              style={{
-                flex: 1,
-                minWidth: 0,
-                background: 'var(--input-bg, #fff)',
-                fontSize: 14,
-                borderRadius: 20,
-                padding: '9px 14px',
-                border: '1px solid rgba(0,0,0,0.1)',
-                outline: 'none',
-                color: 'inherit',
-              }}
-              className="dark:bg-[#2a3942] dark:border-transparent dark:text-gray-100 dark:placeholder-gray-400"
+              className="flex-1 min-w-0 text-sm rounded-full px-3.5 py-2 bg-white dark:bg-[#2a3942] border border-gray-300/40 dark:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none"
             />
           )}
 
-          {/* Mic / Send toggle — fixed 34px, switches based on content (WhatsApp pattern) */}
+          {/* Mic / Send toggle */}
           {isRecording ? null : (
             inputText.trim() || selectedFiles.length > 0 ? (
               <button
                 type="submit"
                 title="Send Message"
-                style={{
-                  flexShrink: 0,
-                  width: 36, height: 36,
-                  borderRadius: '50%',
-                  background: '#0d9488',
-                  color: '#fff',
-                  border: 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
-                  transition: 'background 0.15s, transform 0.1s',
-                }}
-                onMouseDown={e => e.currentTarget.style.transform = 'scale(0.92)'}
-                onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                className="input-circle-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-all"
               >
-                <BsSendFill size={15} />
+                <BsSendFill size={14} />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={() => { setShowAttachMenu(false); startVoiceRecording(); }}
                 title="Record Voice Note"
-                style={{
-                  flexShrink: 0,
-                  width: 36, height: 36,
-                  borderRadius: '50%',
-                  background: '#d97706',
-                  color: '#fff',
-                  border: 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
-                }}
+                className="input-circle-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-amber-600 hover:bg-amber-500 text-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-all"
               >
                 <BsMicFill size={15} />
               </button>

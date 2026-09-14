@@ -520,8 +520,8 @@ const Home = () => {
         flex-1 h-full flex flex-col min-w-0
         ${contentVisibleMobile ? 'flex' : 'hidden'} md:flex
       `}>
-        {/* Content area — flex-1 fills remaining height, no overflow clipping at this level */}
-        <div className="flex-1 flex min-h-0">
+        {/* Content area — flex-1 fills remaining height, min-w-0 and w-full prevent horizontal overflow */}
+        <div className="flex-1 flex min-h-0 min-w-0 w-full">
           {activeTab === 'chats' ? (
             activeChat ? (
               <ChatWindow
