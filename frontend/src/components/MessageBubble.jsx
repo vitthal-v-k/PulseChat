@@ -1,3 +1,4 @@
+// v4 — mobile bubble clipping fix
 import React, { useState } from 'react';
 import { BsCheck, BsCheckAll, BsStar, BsStarFill, BsReply, BsTrash, BsPlusLg, BsXLg, BsStars } from 'react-icons/bs';
 import { FiDownload, FiFileText, FiLoader, FiClock, FiMapPin } from 'react-icons/fi';
