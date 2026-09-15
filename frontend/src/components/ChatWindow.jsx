@@ -76,7 +76,6 @@ const ChatWindow = ({
   const [showDeleteChatConfirm, setShowDeleteChatConfirm] = useState(false);
   const [isClearingChat, setIsClearingChat] = useState(false);
   const [isDeletingChat, setIsDeletingChat] = useState(false);
-  const [showAttachMenu, setShowAttachMenu] = useState(false); // mobile '+' popup
   const headerMenuRef = useRef(null);
 
   // Close header menu on outside click
@@ -573,127 +572,117 @@ const ChatWindow = ({
         </div>
       )}
 
-      {/* Emoji Picker Popup */}
+      {/* Emoji Picker Popup — responsive bounds on mobile */}
       {showEmojiPicker && (
-        <div className="absolute bottom-16 left-4 z-30">
+        <div className="absolute bottom-14 left-2 right-2 sm:left-4 sm:right-auto z-30 max-w-[calc(100vw-16px)] sm:max-w-none flex justify-center sm:block">
           <EmojiPicker
             theme="dark"
+            width="100%"
+            height={360}
             onEmojiClick={(emojiData) => setInputText((prev) => prev + emojiData.emoji)}
           />
         </div>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-           INPUT BAR — universal layout, works on ANY screen width.
-           Main row: [+ 34px] [input flex-1] [mic|send 34px]
-           Fixed overhead ≈ 96px → 138px left for text even at 234px wide.
+           INPUT BAR — compact, modern mobile & desktop layout.
+           [Emoji 32px] [Attach 32px] [Location 32px] [Input flex-1] [Mic/Send 32px]
+           Total fixed buttons overhead: 136px → 184px+ free for input on 360px screen.
       ═══════════════════════════════════════════════════════════════ */}
-      <form onSubmit={handleSend}
-        className="shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34] w-full max-w-full overflow-hidden"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <form
+        onSubmit={handleSend}
+        className="chat-input-form shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34] w-full max-w-full overflow-hidden"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        {/* ── Main input row: all 5 items sized cleanly for mobile ── */}
+        <div className="chat-input-row flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2.5 w-full min-w-0 box-border">
 
-        {/* Attachment popup — slides above bar when '+' is tapped */}
-        {showAttachMenu && (
-          <div className="flex items-center justify-around px-3 py-2.5 sm:px-4 sm:py-3 border-b border-gray-200 dark:border-[#2a3942] animate-fadeIn bg-[#f0f2f5] dark:bg-[#202c33] w-full">
-            <button type="button" onClick={() => { setShowEmojiPicker((p) => !p); setShowAttachMenu(false); }}
-              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors cursor-pointer">
-              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsEmojiSmile size={18} />
-              </span>
-              <span className="text-[10px] font-medium tracking-wide">Emoji</span>
-            </button>
-            <button type="button" onClick={() => { fileInputRef.current?.click(); setShowAttachMenu(false); }}
-              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors cursor-pointer">
-              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsPaperclip size={18} />
-              </span>
-              <span className="text-[10px] font-medium tracking-wide">Attach</span>
-            </button>
-            <button type="button" onClick={() => { handleSendLocation(); setShowAttachMenu(false); }} disabled={isGettingLocation}
-              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 disabled:opacity-40 transition-colors cursor-pointer">
-              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                {isGettingLocation ? <FiLoader size={18} className="animate-spin" /> : <FiMapPin size={18} />}
-              </span>
-              <span className="text-[10px] font-medium tracking-wide">Location</span>
-            </button>
-            <button type="button" onClick={() => { startVoiceRecording(); setShowAttachMenu(false); }}
-              className="attach-menu-item flex flex-col items-center gap-1 text-gray-600 dark:text-gray-300 active:text-teal-500 transition-colors cursor-pointer">
-              <span className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-[#2a3942] border border-gray-200 dark:border-[#374045] flex items-center justify-center shadow-sm">
-                <BsMicFill size={18} />
-              </span>
-              <span className="text-[10px] font-medium tracking-wide">Voice</span>
-            </button>
-          </div>
-        )}
-
-        {/* ── Main input row: 3 elements only → fits ANY screen width ── */}
-        <div className="chat-input-row flex items-center gap-1.5 sm:gap-2 p-2 w-full min-w-0 box-border">
-
-          {/* '+' toggle */}
+          {/* Emoji button */}
           <button
             type="button"
-            onClick={() => setShowAttachMenu((p) => !p)}
-            className="input-circle-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center cursor-pointer transition-all border"
-            style={{
-              borderColor: showAttachMenu ? 'transparent' : 'rgba(156, 163, 175, 0.4)',
-              background: showAttachMenu ? '#0d9488' : 'transparent',
-              color: showAttachMenu ? '#fff' : '#6b7280',
-            }}
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            title="Emoji"
+            className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
           >
-            {showAttachMenu
-              ? <BsSendFill size={13} style={{ transform: 'rotate(45deg)' }} />
-              : <BsPaperclip size={16} />}
+            <BsEmojiSmile size={18} />
           </button>
 
+          {/* Attachment button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            title="Attach file"
+            className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
+          >
+            <BsPaperclip size={18} />
+          </button>
           <input ref={fileInputRef} type="file" multiple onChange={handleFileSelect} className="hidden" />
 
-          {/* Recording UI fills the flex-1 slot */}
+          {/* Location button */}
+          <button
+            type="button"
+            onClick={handleSendLocation}
+            disabled={isGettingLocation}
+            title="Send live location"
+            className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer disabled:opacity-40"
+          >
+            {isGettingLocation ? <FiLoader size={16} className="animate-spin text-teal-500" /> : <FiMapPin size={17} />}
+          </button>
+
+          {/* Recording UI fills flex-1 slot OR Text input fills flex-1 slot */}
           {isRecording ? (
-            <div className="flex-1 min-w-0 flex items-center justify-between rounded-xl px-2.5 py-1.5 bg-red-500/10 border border-red-500/30">
+            <div className="flex-1 min-w-0 flex items-center justify-between rounded-full px-3 py-1.5 bg-red-500/10 border border-red-500/30">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
                 <span className="text-xs font-mono font-bold text-red-500">{formatRecordingTime(recordingTime)}</span>
               </div>
               <div className="flex items-center gap-1">
-                <button type="button" onClick={cancelVoiceRecording}
-                  className="p-1.5 text-gray-500 hover:text-red-600 rounded-full cursor-pointer">
+                <button
+                  type="button"
+                  onClick={cancelVoiceRecording}
+                  className="p-1 text-gray-500 hover:text-red-600 rounded-full cursor-pointer"
+                  title="Cancel recording"
+                >
                   <FiTrash2 size={15} />
                 </button>
-                <button type="button" onClick={finishAndSendVoiceRecording}
-                  className="bg-teal-600 hover:bg-teal-500 text-white rounded-lg px-2.5 py-1 cursor-pointer flex items-center">
-                  <BsSendFill size={13} />
+                <button
+                  type="button"
+                  onClick={finishAndSendVoiceRecording}
+                  className="bg-teal-600 hover:bg-teal-500 text-white rounded-full p-1.5 cursor-pointer flex items-center justify-center shadow-xs"
+                  title="Send voice note"
+                >
+                  <BsSendFill size={12} />
                 </button>
               </div>
             </div>
           ) : (
-            /* Text input — flex-1 min-w-0 stretches to fill ALL remaining space */
             <input
               type="text"
               placeholder="Type a message..."
               value={inputText}
               onChange={handleInputChange}
-              className="flex-1 min-w-0 text-sm rounded-full px-3.5 py-2 bg-white dark:bg-[#2a3942] border border-gray-300/40 dark:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none"
+              className="flex-1 min-w-0 text-sm rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-[#2a3942] border border-gray-300/40 dark:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-500/50 transition-all"
             />
           )}
 
-          {/* Mic / Send toggle */}
-          {isRecording ? null : (
+          {/* Mic / Send toggle button */}
+          {!isRecording && (
             inputText.trim() || selectedFiles.length > 0 ? (
               <button
                 type="submit"
                 title="Send Message"
-                className="input-circle-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-all"
+                className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-all"
               >
-                <BsSendFill size={14} />
+                <BsSendFill size={13} className="ml-0.5" />
               </button>
             ) : (
               <button
                 type="button"
-                onClick={() => { setShowAttachMenu(false); startVoiceRecording(); }}
+                onClick={startVoiceRecording}
                 title="Record Voice Note"
-                className="input-circle-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-amber-600 hover:bg-amber-500 text-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-all"
+                className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full bg-amber-600 hover:bg-amber-500 text-white flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition-all"
               >
-                <BsMicFill size={15} />
+                <BsMicFill size={14} />
               </button>
             )
           )}

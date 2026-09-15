@@ -26,11 +26,11 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
     }
     const st = (message.status || 'SENT').toUpperCase();
     if (st === 'READ') {
-      return <BsCheckAll className="text-[#53bdeb] dark:text-sky-400 text-lg font-bold shrink-0" title="Read" />;
+      return <BsCheckAll className="text-[#53bdeb] dark:text-sky-400 text-[15px] font-bold shrink-0" title="Read" />;
     } else if (st === 'DELIVERED') {
-      return <BsCheckAll className="text-gray-700 dark:text-gray-300 text-lg font-bold shrink-0 opacity-80" title="Delivered" />;
+      return <BsCheckAll className="text-gray-700 dark:text-gray-300 text-[15px] font-bold shrink-0 opacity-80" title="Delivered" />;
     }
-    return <BsCheck className="text-gray-700 dark:text-gray-300 text-lg font-bold shrink-0 opacity-80" title="Sent" />;
+    return <BsCheck className="text-gray-700 dark:text-gray-300 text-[15px] font-bold shrink-0 opacity-80" title="Sent" />;
   };
 
   const parseReactions = (reactionsJson) => {
@@ -286,15 +286,15 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   };
 
   return (
-    <div className={`flex w-full max-w-full my-1 ${isOwn ? 'justify-end pr-1' : 'justify-start pl-1'}`}>
-      <div className="relative group max-w-[85%] sm:max-w-[70%] min-w-0">
+    <div className={`flex w-full max-w-full my-1 ${isOwn ? 'justify-end pr-1.5 sm:pr-3 pl-8' : 'justify-start pl-1.5 sm:pl-3 pr-8'}`}>
+      <div className="relative group max-w-[88%] sm:max-w-[75%] min-w-0">
 
         {/* Message bubble container */}
         <div
-          className={`relative px-3.5 py-2 rounded-2xl text-sm shadow-sm ${
+          className={`relative px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl text-sm shadow-xs ${
             isOwn
               ? 'bg-[#d9fdd3] text-gray-900 dark:bg-[#005c4b] dark:text-white rounded-tr-none'
-              : 'bg-white text-gray-900 dark:bg-[#202c33] dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-transparent'
+              : 'bg-white text-gray-900 dark:bg-[#202c33] dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-[#222d34]'
           }`}
         >
           {/* Sender name for group chats if received */}
@@ -399,14 +399,16 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
             </div>
           )}
 
-          {/* Location Card, Story Reply Card, or Text Content */}
-          {renderMessageBody()}
-
-          {/* Footer timestamp & status ticks */}
-          <div className="flex items-center justify-end gap-1 mt-1 opacity-70 text-[11px] float-right ml-3 shrink-0">
-            {message.isEdited && <span className="text-[10px]">(edited)</span>}
-            <span className="whitespace-nowrap">{formatTime(message.createdAt)}</span>
-            {renderStatusTicks()}
+          {/* Location Card, Story Reply Card, or Text Content + Timestamp in integrated flex layout */}
+          <div className="flex flex-wrap items-end justify-between gap-x-2.5 gap-y-0.5 min-w-[75px]">
+            <div className="min-w-0 break-words leading-relaxed text-sm flex-1">
+              {renderMessageBody()}
+            </div>
+            <div className="flex items-center justify-end gap-1 opacity-70 text-[10px] sm:text-[11px] shrink-0 select-none ml-auto self-end pb-0.5">
+              {message.isEdited && <span className="text-[9px] sm:text-[10px]">(edited)</span>}
+              <span className="whitespace-nowrap">{formatTime(message.createdAt)}</span>
+              {renderStatusTicks()}
+            </div>
           </div>
 
           {/* Reactions badge */}

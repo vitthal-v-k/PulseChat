@@ -91,8 +91,7 @@ form {
 
 @media (max-width: 767px) {
   /* Shrink icon buttons in the input row */
-  .chat-input-row button,
-  form button:not(.attach-menu-item) {
+  .chat-input-row button {
     width: 32px !important;
     height: 32px !important;
     min-width: 32px !important;
@@ -106,24 +105,23 @@ form {
   }
 
   /* Shrink icons inside buttons */
-  .chat-input-row button svg,
-  form button:not(.attach-menu-item) svg {
-    width: 14px !important;
-    height: 14px !important;
+  .chat-input-row button svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 
-  /* Input fills all remaining space */
-  form input[type="text"] {
+  /* Input fills all remaining space without overflow */
+  .chat-input-row input[type="text"] {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    padding: 7px 12px !important;
-    font-size: 13px !important;
+    padding: 6px 12px !important;
+    font-size: 13.5px !important;
   }
 
   /* Compact row gaps and padding */
   .chat-input-row {
-    padding: 6px 8px !important;
-    gap: 6px !important;
+    padding: 6px 6px !important;
+    gap: 4px !important;
   }
 }
 
