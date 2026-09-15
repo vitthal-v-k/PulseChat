@@ -460,7 +460,7 @@ const ChatWindow = ({
       )}
 
       {/* Messages Scroll Thread */}
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2 sm:px-4 py-2 sm:py-3 space-y-2 chat-pattern w-full min-w-0">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-1 sm:px-4 py-2 sm:py-3 space-y-2 chat-pattern w-full min-w-0" style={{ scrollbarWidth: 'none' }}>
         {filteredMessages && filteredMessages.length > 0 ? (() => {
           // Helper: get a stable date-only string (YYYY-MM-DD) for grouping
           const toDateKey = (dateStr) => {

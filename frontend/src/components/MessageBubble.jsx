@@ -286,8 +286,8 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   };
 
   return (
-    <div className={`flex w-full max-w-full my-1 ${isOwn ? 'justify-end pr-2 sm:pr-4 pl-6' : 'justify-start pl-2 sm:pl-4 pr-6'}`}>
-      <div className="relative group max-w-[78%] sm:max-w-[70%] min-w-0">
+    <div className={`flex w-full max-w-full my-1 ${isOwn ? 'justify-end pr-3 sm:pr-4 pl-4' : 'justify-start pl-3 sm:pl-4 pr-4'}`}>
+      <div className={`relative group min-w-0 ${isOwn ? 'max-w-[72%] sm:max-w-[65%]' : 'max-w-[80%] sm:max-w-[70%]'}`}>
 
         {/* Message bubble container */}
         <div

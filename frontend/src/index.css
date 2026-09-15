@@ -92,10 +92,10 @@ form {
 @media (max-width: 767px) {
   /* Shrink icon buttons in the input row */
   .chat-input-row button {
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    max-width: 32px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
     padding: 0 !important;
     border-radius: 50% !important;
     display: flex !important;
@@ -106,16 +106,16 @@ form {
 
   /* Shrink icons inside buttons */
   .chat-input-row button svg {
-    width: 16px !important;
-    height: 16px !important;
+    width: 15px !important;
+    height: 15px !important;
   }
 
   /* Input fills all remaining space without overflow */
   .chat-input-row input[type="text"] {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    padding: 6px 12px !important;
-    font-size: 13.5px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
   }
 
   /* Compact row gaps and padding */
@@ -124,9 +124,17 @@ form {
     gap: 4px !important;
   }
 
-  /* Ensure sent bubbles don't clip behind scrollbar on mobile */
+  /* Zero out scrollbar width so it never steals space from bubbles */
+  ::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+  }
+
+  /* Ensure sent bubbles have safe gap from right edge */
   .chat-pattern {
-    padding-right: 4px !important;
+    padding-right: 6px !important;
+    padding-left: 4px !important;
   }
 }
 
