@@ -595,7 +595,7 @@ const ChatWindow = ({
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         {/* ── Main input row: all 5 items sized cleanly for mobile ── */}
-        <div className="chat-input-row flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2.5 w-full min-w-0 box-border">
+        <div className="chat-input-row flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2.5 w-full min-w-0 box-border">
 
           {/* Emoji button */}
           <button

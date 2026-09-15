@@ -120,8 +120,13 @@ form {
 
   /* Compact row gaps and padding */
   .chat-input-row {
-    padding: 6px 6px !important;
+    padding: 6px 8px !important;
     gap: 4px !important;
+  }
+
+  /* Ensure sent bubbles don't clip behind scrollbar on mobile */
+  .chat-pattern {
+    padding-right: 4px !important;
   }
 }
 
