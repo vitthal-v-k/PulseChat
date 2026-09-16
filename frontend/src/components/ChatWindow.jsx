@@ -307,6 +307,20 @@ const ChatWindow = ({
       : messages
     : [];
 
+  // ── Format last-seen timestamp like WhatsApp ─────────────────────────────
+  const formatLastSeen = (isoStr) => {
+    if (!isoStr) return 'recently';
+    const d = new Date(isoStr);
+    if (isNaN(d)) return 'recently';
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterdayStart = new Date(todayStart - 86400000);
+    const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (d >= todayStart) return `today at ${time}`;
+    if (d >= yesterdayStart) return `yesterday at ${time}`;
+    return `${d.toLocaleDateString([], { day: '2-digit', month: 'short' })} at ${time}`;
+  };
+
   return (
     <div className="flex-1 min-h-0 min-w-0 w-full max-w-full flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors" style={{ overflow: 'hidden' }}>
       
@@ -342,6 +356,10 @@ const ChatWindow = ({
                 ) : chat?.type === 'PRIVATE' ? (
                   chat?.otherParticipant?.isOnline ? (
                     <span className="text-teal-600 dark:text-teal-400 font-semibold">online</span>
+                  ) : chat?.otherParticipant?.lastSeen ? (
+                    <span className="text-gray-500 dark:text-gray-400">
+                      last seen {formatLastSeen(chat.otherParticipant.lastSeen)}
+                    </span>
                   ) : (
                     <span className="text-gray-500 dark:text-gray-400">last seen recently</span>
                   )

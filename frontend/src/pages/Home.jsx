@@ -90,6 +90,7 @@ const Home = () => {
               otherParticipant: {
                 ...c.otherParticipant,
                 isOnline: presenceEvent.isOnline,
+                lastSeen: presenceEvent.lastSeen || c.otherParticipant?.lastSeen,
               },
             };
           }
@@ -108,6 +109,7 @@ const Home = () => {
             otherParticipant: {
               ...prevActive.otherParticipant,
               isOnline: presenceEvent.isOnline,
+              lastSeen: presenceEvent.lastSeen || prevActive.otherParticipant?.lastSeen,
             },
           };
         }

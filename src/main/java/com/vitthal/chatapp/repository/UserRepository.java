@@ -50,4 +50,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.isOnline = :isOnline, u.lastSeen = CURRENT_TIMESTAMP WHERE u.id = :userId")
     void updateOnlineStatus(@Param("userId") Long userId, @Param("isOnline") boolean isOnline);
+
+    /** Reset ALL users to offline — called on server startup to clear stale online flags */
+    @Modifying
+    @Query("UPDATE User u SET u.isOnline = false, u.lastSeen = CURRENT_TIMESTAMP WHERE u.isOnline = true")
+    int resetAllUsersOffline();
 }
