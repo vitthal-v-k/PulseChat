@@ -287,8 +287,13 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   };
 
   return (
-    <div className={`flex w-full max-w-full my-1 ${isOwn ? 'justify-end pr-3 sm:pr-4 pl-4' : 'justify-start pl-3 sm:pl-4 pr-4'}`}>
-      <div className={`relative group min-w-0 ${isOwn ? 'max-w-[72%] sm:max-w-[65%]' : 'max-w-[80%] sm:max-w-[70%]'}`}>
+    <div className={`flex w-full max-w-full my-1 box-border ${isOwn ? 'justify-end' : 'justify-start'}`}
+      style={isOwn ? { paddingRight: '10px', paddingLeft: '4px' } : { paddingLeft: '10px', paddingRight: '4px' }}
+    >
+      <div
+        className="relative group min-w-0 max-w-[72%] sm:max-w-[65%]"
+        style={isOwn ? {} : { maxWidth: '80%' }}
+      >
 
         {/* Message bubble container */}
         <div

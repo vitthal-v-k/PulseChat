@@ -6,7 +6,7 @@
  *  3. Notification click navigation
  */
 
-const CACHE_NAME = 'pulsechat-v4';
+const CACHE_NAME = 'pulsechat-v5';
 const SHELL_ASSETS = ['/logo.svg', '/favicon.svg'];
 
 // ─── Install: cache app assets ──────────────────────────────────────────────
