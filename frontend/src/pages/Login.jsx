@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+// v5 — improved cold-start UX: live countdown, 5 retries × 15 s = 75 s window
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsLockFill, BsEnvelopeFill, BsEyeFill, BsEyeSlashFill } from 'react-icons/bs';
 import Logo from '../components/Logo';
 import { authApi } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+
+const MAX_RETRIES = 5;
+const RETRY_INTERVAL_S = 15;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,64 +21,81 @@ const Login = () => {
   // Cold-start wake-up state
   const [wakingUp, setWakingUp] = useState(false);
   const [retryAttempt, setRetryAttempt] = useState(0);
-  const MAX_RETRIES = 3;
+  const [countdown, setCountdown] = useState(0);
   const pingDoneRef = useRef(false);
+  const countdownRef = useRef(null);
 
-  // ── Proactively wake the server when the login page loads ─────────────────
+  // Clear countdown interval on unmount
+  useEffect(() => () => clearInterval(countdownRef.current), []);
+
+  // Start a live countdown from `seconds` down to 0
+  const startCountdown = useCallback((seconds) => {
+    clearInterval(countdownRef.current);
+    setCountdown(seconds);
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) { clearInterval(countdownRef.current); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+
+  // ── Proactively wake the server when the login page loads ──────────────────
   useEffect(() => {
     if (pingDoneRef.current) return;
     pingDoneRef.current = true;
-
-    // Fire a silent health-check ping; ignore errors — it's just to wake Railway
-    api.get('/health', { timeout: 65000 }).catch(() => {});
+    // Silent ping — just to start Railway cold-start ASAP
+    api.get('/health', { timeout: 90000 }).catch(() => {});
   }, []);
 
-  // ── Listen for retry events dispatched by axios interceptor ───────────────
+  // ── Listen for retry events dispatched by axios interceptor ────────────────
   useEffect(() => {
     const handleRetry = (e) => {
       setWakingUp(true);
       setRetryAttempt(e.detail.attempt);
       setError('');
+      startCountdown(RETRY_INTERVAL_S);
     };
-
     window.addEventListener('api:retrying', handleRetry);
     return () => window.removeEventListener('api:retrying', handleRetry);
-  }, []);
+  }, [startCountdown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setWakingUp(false);
     setRetryAttempt(0);
+    clearInterval(countdownRef.current);
+    setCountdown(0);
     setLoading(true);
 
     try {
       const res = await authApi.login(formData);
+      setWakingUp(false);
       login(res.data);
       navigate('/home');
     } catch (err) {
       setWakingUp(false);
+      clearInterval(countdownRef.current);
+      setCountdown(0);
       const data = err.response?.data;
       if (data?.errors && typeof data.errors === 'object') {
-        const errorMessages = Object.entries(data.errors)
-          .map(([field, msg]) => `${field}: ${msg}`)
-          .join(' | ');
-        setError(errorMessages);
+        setError(Object.entries(data.errors).map(([f, m]) => `${f}: ${m}`).join(' | '));
       } else {
-        setError(data?.message || 'Login failed. Please check credentials.');
+        setError(data?.message || 'Login failed. Please check your credentials.');
       }
     } finally {
       setLoading(false);
     }
   };
 
-  // Progress bar percentage for cold-start retry UI
   const retryProgress = wakingUp ? Math.round((retryAttempt / MAX_RETRIES) * 100) : 0;
+  const countdownPct = countdown > 0 ? Math.round((countdown / RETRY_INTERVAL_S) * 100) : 0;
 
   return (
     <div className="relative w-screen h-screen bg-[#0b141a] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-[#111b21] border border-[#222d34] rounded-2xl shadow-2xl p-8 text-gray-100">
-        
+
         <div className="flex flex-col items-center mb-8">
           <div className="w-16 h-16 mb-3 p-1 rounded-2xl flex items-center justify-center shadow-lg">
             <Logo className="w-full h-full" />
@@ -83,37 +104,57 @@ const Login = () => {
           <p className="text-xs text-gray-400 mt-1">Sign in to continue to PulseChat</p>
         </div>
 
-        {/* ── Cold-start "Waking server" banner ───────────────────────────── */}
+        {/* ── Cold-start "Waking server" amber banner ──────────────────────── */}
         {wakingUp && (
-          <div className="mb-6 rounded-xl border border-teal-500/30 bg-teal-500/10 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              {/* Spinner */}
-              <svg
-                className="animate-spin h-4 w-4 text-teal-400 flex-shrink-0"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
+          <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-amber-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
               </svg>
-              <span className="text-xs font-semibold text-teal-300">
-                Server is waking up… ({retryAttempt}/{MAX_RETRIES})
+              <span className="text-xs font-bold text-amber-300">
+                Server is starting up… ({retryAttempt}/{MAX_RETRIES})
               </span>
             </div>
-            <p className="text-[11px] text-teal-200/60 mb-3 leading-relaxed">
-              The server goes to sleep after inactivity. Retrying automatically — please wait a moment.
+
+            <p className="text-[11px] text-amber-200/60 leading-relaxed">
+              The backend sleeps after inactivity and takes ~30–60 s to wake.
+              Your login will retry automatically — no need to click again.
             </p>
-            {/* Progress bar */}
-            <div className="w-full h-1.5 bg-teal-900/50 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full transition-all duration-700"
-                style={{ width: `${retryProgress}%` }}
-              />
+
+            {/* Overall wake progress */}
+            <div>
+              <div className="flex justify-between text-[10px] text-amber-400/60 mb-1">
+                <span>Wake progress</span>
+                <span>{retryProgress}%</span>
+              </div>
+              <div className="w-full h-1 bg-amber-900/40 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-700"
+                  style={{ width: `${retryProgress}%` }}
+                />
+              </div>
             </div>
+
+            {/* Countdown to next retry */}
+            {countdown > 0 && (
+              <div>
+                <div className="flex justify-between text-[10px] text-amber-400/60 mb-1">
+                  <span>Next attempt in</span>
+                  <span className="font-mono font-bold text-amber-300">{countdown}s</span>
+                </div>
+                <div className="w-full h-1 bg-amber-900/40 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-400/40 rounded-full transition-all duration-1000"
+                    style={{ width: `${countdownPct}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* ── Error banner (shown only after all retries exhausted) ─────────── */}
+        {/* ── Error banner ─────────────────────────────────────────────────── */}
         {error && !wakingUp && (
           <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-xs p-3 rounded-xl mb-6 text-center leading-relaxed">
             {error}
@@ -160,7 +201,7 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <label className="flex items-center gap-2 cursor-pointer text-xs text-gray-400">
               <input
                 type="checkbox"
@@ -177,7 +218,11 @@ const Login = () => {
             disabled={loading}
             className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl text-sm transition-colors shadow-lg disabled:opacity-50 cursor-pointer"
           >
-            {loading ? (wakingUp ? 'Waking server…' : 'Signing in…') : 'Sign In'}
+            {loading
+              ? wakingUp
+                ? `Waking up server… (${retryAttempt}/${MAX_RETRIES})`
+                : 'Signing in…'
+              : 'Sign In'}
           </button>
         </form>
 
@@ -193,20 +238,12 @@ const Login = () => {
       <div className="absolute bottom-6 left-0 right-0 flex justify-center select-none pointer-events-none">
         <div className="creator-badge">
           <div className="creator-badge-inner">
-            {/* Pulsing dot */}
             <span className="relative flex h-2 w-2 flex-shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
             </span>
-
-            {/* Code bracket prefix */}
             <span className="text-purple-400 font-mono font-bold text-xs opacity-80">&lt;/&gt;</span>
-
-            <span className="text-[9px] font-semibold tracking-[0.2em] uppercase text-white/35">
-              created by
-            </span>
-
-            {/* Shimmering name */}
+            <span className="text-[9px] font-semibold tracking-[0.2em] uppercase text-white/35">created by</span>
             <span className="
               text-sm font-black tracking-widest
               bg-gradient-to-r from-teal-300 via-cyan-200 via-purple-300 to-pink-300
@@ -215,8 +252,6 @@ const Login = () => {
             ">
               Vitthal
             </span>
-
-            {/* Stars */}
             <span className="text-pink-400 animate-pulse text-xs">✦</span>
             <span className="text-cyan-400 animate-pulse text-xs" style={{ animationDelay: '0.5s' }}>✦</span>
           </div>
@@ -227,5 +262,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

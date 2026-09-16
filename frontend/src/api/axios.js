@@ -3,8 +3,8 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api';
 
 // Max retries for cold-start timeouts / network errors
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 5000; // 5 s between retries
+const MAX_RETRIES = 5;
+const RETRY_DELAY_MS = 15000; // 15 s between retries — Railway can take 60-90 s to wake
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
