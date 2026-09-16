@@ -619,52 +619,6 @@ const ChatWindow = ({
         </div>
       )}
 
-      {/* ═══ + PLUS MENU TRAY (mobile only) ═══════════════════════════════
-           Slides up above the composer when the + button is tapped.
-           Contains: Emoji toggle, Attach file, Location send.
-      ════════════════════════════════════════════════════════════════════ */}
-      {showPlusMenu && (
-        <div
-          ref={plusMenuRef}
-          className="absolute bottom-16 left-3 z-30 flex gap-2 p-2 rounded-2xl shadow-xl border border-gray-200 dark:border-[#2a3942] bg-white dark:bg-[#1f2c34] animate-fadeIn"
-        >
-          {/* Emoji */}
-          <button
-            type="button"
-            title="Emoji"
-            onClick={() => { setShowEmojiPicker((prev) => !prev); setShowPlusMenu(false); }}
-            className="flex flex-col items-center gap-1 w-14 h-14 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-500/20 active:scale-95 transition-all cursor-pointer"
-          >
-            <BsEmojiSmile size={22} className="mt-2" />
-            <span className="text-[9px] font-semibold">Emoji</span>
-          </button>
-
-          {/* Attach */}
-          <button
-            type="button"
-            title="Attach file"
-            onClick={() => { fileInputRef.current?.click(); setShowPlusMenu(false); }}
-            className="flex flex-col items-center gap-1 w-14 h-14 rounded-xl bg-teal-50 dark:bg-teal-500/10 text-teal-500 hover:bg-teal-100 dark:hover:bg-teal-500/20 active:scale-95 transition-all cursor-pointer"
-          >
-            <BsPaperclip size={22} className="mt-2" />
-            <span className="text-[9px] font-semibold">File</span>
-          </button>
-
-          {/* Location */}
-          <button
-            type="button"
-            title="Send live location"
-            disabled={isGettingLocation}
-            onClick={() => { handleSendLocation(); setShowPlusMenu(false); }}
-            className="flex flex-col items-center gap-1 w-14 h-14 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-500/20 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
-          >
-            {isGettingLocation
-              ? <FiLoader size={22} className="mt-2 animate-spin" />
-              : <FiMapPin size={22} className="mt-2" />}
-            <span className="text-[9px] font-semibold">Location</span>
-          </button>
-        </div>
-      )}
 
       {/* ═══════════════════════════════════════════════════════════════
            INPUT BAR
@@ -694,22 +648,7 @@ const ChatWindow = ({
             minWidth: 0,
           }}
         >
-          {/* ── [+] button visible only on mobile ── */}
-          <button
-            type="button"
-            title="More options"
-            onClick={() => setShowPlusMenu((prev) => !prev)}
-            className={`sm:hidden shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-              showPlusMenu
-                ? 'bg-teal-500 text-white rotate-45'
-                : 'bg-gray-200 dark:bg-[#2a3942] text-gray-600 dark:text-gray-300 hover:bg-teal-100 dark:hover:bg-teal-800'
-            }`}
-            style={{ flexShrink: 0, transform: showPlusMenu ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}
-          >
-            <FiPlus size={16} />
-          </button>
-
-          {/* ── Emoji / Attach / Location: visible on desktop, hidden on mobile ── */}
+          {/* ── Emoji: desktop only ── */}
           <button
             type="button"
             onClick={() => setShowEmojiPicker((prev) => !prev)}
@@ -719,24 +658,24 @@ const ChatWindow = ({
             <BsEmojiSmile size={18} />
           </button>
 
-          {/* Attachment button — desktop only */}
+          {/* Attachment button — all screen sizes */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             title="Attach file"
-            className="chat-desktop-btn hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
           >
             <BsPaperclip size={18} />
           </button>
           <input ref={fileInputRef} type="file" multiple onChange={handleFileSelect} className="hidden" />
 
-          {/* Location button — desktop only */}
+          {/* Location button — all screen sizes */}
           <button
             type="button"
             onClick={handleSendLocation}
             disabled={isGettingLocation}
             title="Send live location"
-            className="chat-desktop-btn hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer disabled:opacity-40"
+            className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer disabled:opacity-40"
           >
             {isGettingLocation ? <FiLoader size={16} className="animate-spin text-teal-500" /> : <FiMapPin size={17} />}
           </button>
