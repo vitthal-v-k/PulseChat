@@ -1,5 +1,5 @@
-// v4 — mobile bubble clipping fix
-import React, { useState } from 'react';
+// v4 — mobile bubble clipping fix + long-press mobile menu
+import React, { useState, useRef, useCallback } from 'react';
 import { BsCheck, BsCheckAll, BsStar, BsStarFill, BsReply, BsTrash, BsPlusLg, BsXLg, BsStars } from 'react-icons/bs';
 import { FiDownload, FiFileText, FiLoader, FiClock, FiMapPin } from 'react-icons/fi';
 import EmojiPicker from 'emoji-picker-react';
@@ -9,6 +9,36 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showFullPicker, setShowFullPicker] = useState(false);
   const [lightboxImg, setLightboxImg] = useState(null);
+
+  // ── Long-press for mobile ────────────────────────────────────────────────
+  const longPressTimer = useRef(null);
+  const touchMoved = useRef(false);
+
+  const handleTouchStart = useCallback((e) => {
+    touchMoved.current = false;
+    longPressTimer.current = setTimeout(() => {
+      if (!touchMoved.current) {
+        // Prevent the default context-menu / text-selection on mobile
+        e.preventDefault?.();
+        setShowMenu(true);
+      }
+    }, 500);
+  }, []);
+
+  const handleTouchMove = useCallback(() => {
+    touchMoved.current = true;
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setShowMenu(false);
+    setShowEmojiPicker(false);
+    setShowFullPicker(false);
+  }, []);
 
   if (!message) return null;
 
@@ -300,6 +330,15 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
         paddingLeft: isOwn ? '4px' : '10px',
       }}
     >
+      {/* Mobile backdrop — tapping outside closes the action menu */}
+      {showMenu && (
+        <div
+          className="fixed inset-0 z-[5]"
+          onTouchStart={closeMenu}
+          onClick={closeMenu}
+        />
+      )}
+
       <div
         style={{
           position: 'relative',
@@ -307,6 +346,10 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
           maxWidth: isOwn ? '72%' : '80%',
         }}
         className="group"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
       >
 
         {/* Message bubble container */}
@@ -458,23 +501,41 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
           })()}
         </div>
 
-        {/* Hover quick action bar */}
+        {/* Hover / long-press quick action bar */}
         <div
           className={`absolute top-1 ${
             isOwn ? '-left-24' : '-right-24'
-          } hidden group-hover:flex items-center gap-1 bg-[#111b21] p-1 rounded-lg border border-gray-700 shadow-md text-gray-300 z-10`}
+          } items-center gap-1 bg-[#111b21] p-1 rounded-lg border border-gray-700 shadow-md text-gray-300 z-10 ${
+            showMenu ? 'flex' : 'hidden group-hover:flex'
+          }`}
         >
-          <button onClick={() => onReply && onReply(message)} title="Reply" className="hover:text-white p-1 cursor-pointer">
+          <button
+            onClick={() => { onReply && onReply(message); closeMenu(); }}
+            title="Reply"
+            className="hover:text-white active:text-white p-1 cursor-pointer"
+          >
             <BsReply size={14} />
           </button>
-          <button onClick={() => onStar && onStar(message.id)} title="Star" className="hover:text-yellow-400 p-1 cursor-pointer">
+          <button
+            onClick={() => { onStar && onStar(message.id); closeMenu(); }}
+            title="Star"
+            className="hover:text-yellow-400 active:text-yellow-400 p-1 cursor-pointer"
+          >
             {message.isStarred ? <BsStarFill className="text-yellow-400" size={13} /> : <BsStar size={13} />}
           </button>
-          <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} title="React" className="hover:text-white p-1 cursor-pointer">
+          <button
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            title="React"
+            className="hover:text-white active:text-white p-1 cursor-pointer"
+          >
             😀
           </button>
           {onDelete && (
-            <button onClick={() => onDelete(message)} title="Delete message" className="hover:text-red-400 p-1 cursor-pointer">
+            <button
+              onClick={() => { onDelete(message); closeMenu(); }}
+              title="Delete message"
+              className="hover:text-red-400 active:text-red-400 p-1 cursor-pointer"
+            >
               <BsTrash size={13} />
             </button>
           )}
@@ -482,7 +543,9 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
 
         {/* Quick Emoji Reaction Popup & Full Picker */}
         {showEmojiPicker && (
-          <div className="absolute -top-11 left-0 bg-[#111b21] border border-gray-700 px-2.5 py-1 rounded-full shadow-xl flex items-center gap-1.5 z-20 animate-fadeIn select-none">
+          <div className={`absolute bg-[#111b21] border border-gray-700 px-2.5 py-1 rounded-full shadow-xl flex items-center gap-1.5 z-20 animate-fadeIn select-none ${
+            isOwn ? 'right-0' : 'left-0'
+          } -top-11 max-w-[calc(100vw-24px)] overflow-x-auto`}>
             {['👍', '❤️', '😂', '😮', '😢', '🔥', '👏', '🎉', '🙏', '💯', '🥳', '😍', '👀', '✨'].map((emoji) => (
               <button
                 key={emoji}
