@@ -619,7 +619,7 @@ const ChatWindow = ({
             width: '100%',
             maxWidth: '100%',
             boxSizing: 'border-box',
-            padding: '6px 8px',
+            padding: '4px 6px',
             minWidth: 0,
           }}
         >

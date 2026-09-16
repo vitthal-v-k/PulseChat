@@ -101,12 +101,12 @@ form {
 }
 
 @media (max-width: 767px) {
-  /* Force buttons in composer to be exactly 30px — flex-shrink 0 so they never squish */
+  /* Force buttons in composer to be exactly 28px — flex-shrink 0 so they never squish */
   .chat-input-row button {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    max-width: 30px !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
     flex-shrink: 0 !important;
     padding: 0 !important;
     border-radius: 50% !important;
@@ -117,23 +117,23 @@ form {
 
   /* Shrink icons inside buttons */
   .chat-input-row button svg {
-    width: 15px !important;
-    height: 15px !important;
+    width: 14px !important;
+    height: 14px !important;
   }
 
   /* Input takes all remaining space, never fixed-width */
   .chat-input-row input[type="text"] {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    width: 0 !important;          /* flex override: grows from 0 via flex-1 */
-    padding: 6px 10px !important;
+    width: 0 !important;
+    padding: 5px 10px !important;
     font-size: 13px !important;
   }
 
-  /* Row: 8px horizontal padding, 4px gap between items */
+  /* Row: tight padding so the bar stays slim */
   .chat-input-row {
-    padding: 6px 8px !important;
-    gap: 4px !important;
+    padding: 4px 6px !important;
+    gap: 3px !important;
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
