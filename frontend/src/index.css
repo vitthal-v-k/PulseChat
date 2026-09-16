@@ -100,6 +100,13 @@ form {
   box-sizing: border-box;
 }
 
+/* Desktop-only composer buttons (emoji, attach, location) — hidden on mobile, accessible via + tray */
+@media (max-width: 639px) {
+  .chat-desktop-btn {
+    display: none !important;
+  }
+}
+
 @media (max-width: 767px) {
   /* Force buttons in composer to be exactly 28px — flex-shrink 0 so they never squish */
   .chat-input-row button {

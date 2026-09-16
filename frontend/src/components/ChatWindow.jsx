@@ -714,7 +714,7 @@ const ChatWindow = ({
             type="button"
             onClick={() => setShowEmojiPicker((prev) => !prev)}
             title="Emoji"
-            className="hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
+            className="chat-desktop-btn hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
           >
             <BsEmojiSmile size={18} />
           </button>
@@ -724,7 +724,7 @@ const ChatWindow = ({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             title="Attach file"
-            className="hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
+            className="chat-desktop-btn hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer"
           >
             <BsPaperclip size={18} />
           </button>
@@ -736,7 +736,7 @@ const ChatWindow = ({
             onClick={handleSendLocation}
             disabled={isGettingLocation}
             title="Send live location"
-            className="hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer disabled:opacity-40"
+            className="chat-desktop-btn hidden sm:flex w-9 h-9 shrink-0 rounded-full items-center justify-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-gray-200 dark:hover:bg-[#2a3942] active:scale-95 transition-all cursor-pointer disabled:opacity-40"
           >
             {isGettingLocation ? <FiLoader size={16} className="animate-spin text-teal-500" /> : <FiMapPin size={17} />}
           </button>
