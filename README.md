@@ -2,9 +2,9 @@
 
 > A **production-ready**, full-stack real-time chat application built with **Spring Boot** (backend) + **React + Vite** (frontend).
 
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-thepulsechat.vercel.app-teal?style=for-the-badge)](https://thepulsechat.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-pulse--chat--delta.vercel.app-teal?style=for-the-badge)](https://pulse-chat-delta.vercel.app/)
 
-🔗 **Live App:** [https://thepulsechat.vercel.app](https://thepulsechat.vercel.app/)
+🔗 **Live App:** [https://pulse-chat-delta.vercel.app](https://pulse-chat-delta.vercel.app/)
 
 ---
 
@@ -492,8 +492,8 @@ The app uses **STOMP** (Simple Text Oriented Messaging Protocol) over **SockJS**
 ## 🚢 Deployment
 
 ### 🌐 Live Production
-- **Frontend (Vercel):** [https://thepulsechat.vercel.app](https://thepulsechat.vercel.app/)
-- **Backend (Render):** Hosted on Render Cloud
+- **Frontend (Vercel):** [https://pulse-chat-delta.vercel.app](https://pulse-chat-delta.vercel.app/)
+- **Backend (Railway):** Hosted on Railway Cloud
 
 ### Backend
 ```bash
