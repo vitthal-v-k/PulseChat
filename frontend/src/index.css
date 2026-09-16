@@ -101,18 +101,18 @@ form {
 }
 
 @media (max-width: 767px) {
-  /* Shrink icon buttons in the input row */
+  /* Force buttons in composer to be exactly 30px — flex-shrink 0 so they never squish */
   .chat-input-row button {
     width: 30px !important;
     height: 30px !important;
     min-width: 30px !important;
     max-width: 30px !important;
+    flex-shrink: 0 !important;
     padding: 0 !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    flex-shrink: 0 !important;
   }
 
   /* Shrink icons inside buttons */
@@ -121,31 +121,30 @@ form {
     height: 15px !important;
   }
 
-  /* Input fills all remaining space without overflow */
+  /* Input takes all remaining space, never fixed-width */
   .chat-input-row input[type="text"] {
     flex: 1 1 0% !important;
     min-width: 0 !important;
+    width: 0 !important;          /* flex override: grows from 0 via flex-1 */
     padding: 6px 10px !important;
     font-size: 13px !important;
   }
 
-  /* Compact row gaps and padding */
+  /* Row: 8px horizontal padding, 4px gap between items */
   .chat-input-row {
     padding: 6px 8px !important;
     gap: 4px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
   }
 
-  /* Zero out scrollbar width so it never steals space from bubbles */
+  /* Hide scrollbar everywhere on mobile */
   ::-webkit-scrollbar {
     width: 0 !important;
     height: 0 !important;
     display: none !important;
-  }
-
-  /* Ensure sent bubbles have safe gap from right edge */
-  .chat-pattern {
-    padding-right: 6px !important;
-    padding-left: 4px !important;
   }
 }
 

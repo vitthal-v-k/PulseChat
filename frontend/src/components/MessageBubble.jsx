@@ -287,12 +287,26 @@ const MessageBubble = ({ message, isOwn, onReply, onDelete, onStar, onReact, onE
   };
 
   return (
-    <div className={`flex w-full max-w-full my-1 box-border ${isOwn ? 'justify-end' : 'justify-start'}`}
-      style={isOwn ? { paddingRight: '10px', paddingLeft: '4px' } : { paddingLeft: '10px', paddingRight: '4px' }}
+    <div
+      style={{
+        display: 'flex',
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+        marginTop: '4px',
+        marginBottom: '4px',
+        justifyContent: isOwn ? 'flex-end' : 'flex-start',
+        paddingRight: isOwn ? '10px' : '4px',
+        paddingLeft: isOwn ? '4px' : '10px',
+      }}
     >
       <div
-        className="relative group min-w-0 max-w-[72%] sm:max-w-[65%]"
-        style={isOwn ? {} : { maxWidth: '80%' }}
+        style={{
+          position: 'relative',
+          minWidth: 0,
+          maxWidth: isOwn ? '72%' : '80%',
+        }}
+        className="group"
       >
 
         {/* Message bubble container */}

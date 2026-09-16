@@ -302,7 +302,7 @@ const ChatWindow = ({
     : [];
 
   return (
-    <div className="flex-1 min-h-0 min-w-0 w-full max-w-full flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors overflow-hidden">
+    <div className="flex-1 min-h-0 min-w-0 w-full max-w-full flex flex-col bg-[#efeae2] dark:bg-[#0b141a] text-gray-900 dark:text-gray-100 select-none relative transition-colors" style={{ overflow: 'hidden' }}>
       
       {/* Top Header */}
       <div className="h-16 px-3 sm:px-4 bg-[#f0f2f5] dark:bg-[#202c33] flex items-center justify-between border-b border-gray-200 dark:border-[#222d34] z-10 w-full min-w-0">
@@ -460,7 +460,18 @@ const ChatWindow = ({
       )}
 
       {/* Messages Scroll Thread */}
-      <div className="flex-1 min-h-0 overflow-y-scroll overflow-x-hidden box-border py-2 sm:py-3 space-y-2 chat-pattern w-full" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div
+        className="flex-1 min-h-0 py-2 sm:py-3 space-y-2 chat-pattern"
+        style={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
+      >
         {filteredMessages && filteredMessages.length > 0 ? (() => {
           // Helper: get a stable date-only string (YYYY-MM-DD) for grouping
           const toDateKey = (dateStr) => {
@@ -591,11 +602,27 @@ const ChatWindow = ({
       ═══════════════════════════════════════════════════════════════ */}
       <form
         onSubmit={handleSend}
-        className="chat-input-form shrink-0 bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34] w-full max-w-full overflow-hidden"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        style={{
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          flexShrink: 0,
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          overflow: 'hidden',
+        }}
+        className="chat-input-form bg-[#f0f2f5] dark:bg-[#202c33] border-t border-gray-200 dark:border-[#222d34]"
       >
-        {/* ── Main input row: all 5 items sized cleanly for mobile ── */}
-        <div className="chat-input-row flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2.5 w-full min-w-0 box-border">
+        {/* ── Main input row ── */}
+        <div
+          className="chat-input-row flex items-center gap-1 sm:gap-2"
+          style={{
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
+            padding: '6px 8px',
+            minWidth: 0,
+          }}
+        >
 
           {/* Emoji button */}
           <button
